@@ -1,0 +1,20 @@
+# Environment and secrets
+*.env
+.env.*
+secrets/
+
+# Build output (any level)
+build/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Cambric local state
+.cambric/
+
