@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cambric_app/core/config/cambric_config.dart';
+import 'package:max_tools/core/config/cambric_config.dart';
 
 void main() {
   group('CambricConfig.fromJson', () {

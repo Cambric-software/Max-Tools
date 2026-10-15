@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cambric_app/core/security/input_sanitization_service.dart';
+import 'package:max_tools/core/security/input_sanitization_service.dart';
 
 void main() {
   group('InputSanitizationService', () {

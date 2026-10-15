@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cambric_app/core/storage/atomic_file_service.dart';
+import 'package:max_tools/core/storage/atomic_file_service.dart';
 
 void main() {
   late Directory tempDir;

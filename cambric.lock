@@ -4,7 +4,7 @@
   "cambric": {
     "templateVersion": "0.1.0",
     "appVersion": "0.1.0",
-    "repository": "Cambric-software/app-template"
+    "repository": "Cambric-software/Max-Tools"
   },
   "environment": {
     "flutter": "3.47.2",

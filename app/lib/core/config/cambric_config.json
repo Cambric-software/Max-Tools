@@ -1,9 +1,9 @@
 {
   "product": {
-    "id": "cambric-app-product",
-    "name": "Cambric App Product",
+    "id": "max-tools-product",
+    "name": "Max Tools",
     "subtitle": "",
-    "description": "A Cambric application built on the app-template foundation.",
+    "description": "Max Tools - all-in-one toolkit for developers, animators, freelancers and business users.",
     "publisher": "Cambric Software",
     "version": "1.0.0",
     "templateVersion": "1.0.0",
