@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../cache/cache_screen.dart';
 import '../settings/settings_screen.dart';
 import '../diagnostics/diagnostics_screen.dart';
+import '../tools/tools_screen.dart';
 import '../../widgets/responsive_layout.dart';
 import '../../widgets/state_widgets.dart';
 
@@ -59,6 +60,9 @@ class HomeScreen extends StatelessWidget {
     return [
       _heroCard(context),
       const SizedBox(height: 16),
+      _navCard(context, icon: Icons.handyman_outlined, title: 'Tools', subtitle: 'Every tool in one searchable place',
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ToolsScreen()))),
+      const SizedBox(height: 8),
       _navCard(context, icon: Icons.storage_outlined, title: 'Cache', subtitle: 'View and clear cached data',
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CacheScreen()))),
       const SizedBox(height: 8),
@@ -81,9 +85,9 @@ class HomeScreen extends StatelessWidget {
           children: [
             Icon(Icons.layers_outlined, size: 32, color: colorScheme.onPrimaryContainer),
             const SizedBox(height: 12),
-            Text('Cambric App Template', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: colorScheme.onPrimaryContainer)),
+            Text('Max Tools', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: colorScheme.onPrimaryContainer)),
             const SizedBox(height: 4),
-            Text('Replace this product layer with your application.', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimaryContainer)),
+            Text('All your tools in one place.', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimaryContainer)),
           ],
         ),
       ),

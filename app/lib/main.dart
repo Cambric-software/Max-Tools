@@ -5,6 +5,8 @@ import 'core/ecosystem/product_registry_service.dart';
 import 'core/lifecycle/app_lifecycle_service.dart';
 import 'core/config/cambric_config.dart';
 import 'theme/app_theme.dart';
+import 'tools/catalog/tool_catalog.dart';
+import 'tools/tools_scope.dart';
 import 'widgets/cambric_first_run_wizard.dart';
 import 'cambric_app_shell.dart';
 
@@ -70,27 +72,32 @@ class CambricTemplateApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
-      home: Builder(
-        builder: (context) {
-          return CambricAppShell(
-            productName: config.productName,
-            version: config.version,
-            child: Center(
-              child: FilledButton(
-                onPressed: () {
-                  showDialog<void>(
-                    context: context,
-                    builder: (_) => CambricFirstRunWizard(
-                      existingProducts: existingProducts,
-                      onComplete: () => Navigator.of(context).pop(),
-                    ),
-                  );
-                },
-                child: const Text('Open Cambric Setup'),
+      // One registry for the whole app: every tool screen, the command palette
+      // and automation all resolve tools through this instance.
+      home: ToolsScope(
+        registry: buildDefaultRegistry(),
+        child: Builder(
+          builder: (context) {
+            return CambricAppShell(
+              productName: config.productName,
+              version: config.version,
+              child: Center(
+                child: FilledButton(
+                  onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (_) => CambricFirstRunWizard(
+                        existingProducts: existingProducts,
+                        onComplete: () => Navigator.of(context).pop(),
+                      ),
+                    );
+                  },
+                  child: const Text('Open Cambric Setup'),
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
