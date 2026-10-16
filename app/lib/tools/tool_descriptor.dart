@@ -6,6 +6,8 @@
 /// knowing anything about the implementation.
 library;
 
+import 'variable_store.dart';
+
 /// Broad grouping used for browsing, filtering and palette prefixes.
 enum ToolCategory {
   developer('Developer'),
@@ -47,6 +49,7 @@ class ToolParameter {
     required this.description,
     this.required = false,
     this.defaultValue,
+    this.type = VariableType.text,
   });
 
   /// Machine name, as passed in the arguments map.
@@ -60,6 +63,26 @@ class ToolParameter {
 
   /// Value used when the caller omits a non-required parameter.
   final Object? defaultValue;
+
+  /// Expected kind of value.
+  ///
+  /// Left as [VariableType.text] by default; [resolvedType] then infers the
+  /// type from [defaultValue] so existing descriptors describe themselves.
+  final VariableType type;
+
+  /// The type to use when parsing and rendering: the declared [type] unless it
+  /// was left as text and [defaultValue] implies something else.
+  VariableType get resolvedType {
+    if (type != VariableType.text) return type;
+    if (defaultValue == null) return VariableType.text;
+    return VariableType.infer(defaultValue);
+  }
+
+  /// Whether this parameter holds a number.
+  bool get isNumeric => resolvedType == VariableType.number;
+
+  /// Whether this parameter holds a flag.
+  bool get isBoolean => resolvedType == VariableType.boolean;
 }
 
 /// Outcome of running a tool.
