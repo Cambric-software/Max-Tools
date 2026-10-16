@@ -7,10 +7,16 @@ library;
 import '../tool_descriptor.dart';
 import '../tool_registry.dart';
 import 'developer_catalog.dart';
+import 'system_catalog.dart';
+import 'text_catalog.dart';
 
 /// Create a registry populated with every catalog batch.
 ToolRegistry buildDefaultRegistry() {
   final registry = ToolRegistry();
-  registry.registerAll(<ToolDescriptor>[...developerTools()]);
+  registry.registerAll(<ToolDescriptor>[
+    ...developerTools(),
+    ...textTools(),
+    ...systemTools(),
+  ]);
   return registry;
 }

@@ -94,7 +94,10 @@ void main() {
 
     testWidgets('category filter narrows to one category', (tester) async {
       await pumpTools(tester);
-      await tester.tap(find.widgetWithText(FilterChip, 'Security (2)'));
+      final securityCount = registry.byCategory(ToolCategory.security).length;
+      await tester.tap(
+        find.widgetWithText(FilterChip, 'Security ($securityCount)'),
+      );
       await tester.pumpAndSettle();
       expect(find.text('Hash Text'), findsOneWidget);
       expect(find.text('Parse CSV'), findsNothing);
