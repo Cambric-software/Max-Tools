@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Max Tools — Download</title>
+<meta name="description" content="Max Tools by Cambric Software: one all-in-one toolkit for developers, animators, freelancers and business users. Download for Windows, Linux and Android.">
+<meta name="theme-color" content="#12141a">
+<meta property="og:title" content="Max Tools — Download">
+<meta property="og:description" content="All your tools in one place. Windows, Linux and Android.">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    --bg: #0e1015;
+    --surface: #171a22;
+    --surface-2: #1e222c;
+    --border: #2a2f3b;
+    --text: #e8eaf0;
+    --muted: #9aa3b5;
+    --accent: #5b8cff;
+    --accent-2: #7c5bff;
+    --radius: 14px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f7fb;
+      --surface: #ffffff;
+      --surface-2: #f0f2f7;
+      --border: #e0e3ec;
+      --text: #171a22;
+      --muted: #5c6474;
+      --shadow: 0 8px 24px rgba(20, 24, 40, .08);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  header {
+    padding: 64px 0 40px;
+    background: linear-gradient(180deg, rgba(91,140,255,.14), transparent 70%);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 600; letter-spacing: .2px; }
+  .logo {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 15px;
+  }
+  h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.15; margin: 28px 0 12px; }
+  .tagline { font-size: clamp(16px, 2.2vw, 20px); color: var(--muted); max-width: 62ch; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 22px; border-radius: 11px; text-decoration: none;
+    font-weight: 600; border: 1px solid var(--border); color: var(--text);
+    background: var(--surface); transition: transform .12s ease, border-color .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); border-color: var(--accent); }
+  .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-color: transparent; color: #fff; }
+  section { padding: 48px 0; }
+  h2 { font-size: 24px; margin: 0 0 8px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .card h3 { margin: 0; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14.5px; flex: 1; }
+  .pill { font-size: 11.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+  .card .btn { justify-content: center; margin-top: 4px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .pillars { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .pillar { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .pillar strong { display: block; margin-bottom: 6px; }
+  .pillar span { color: var(--muted); font-size: 14px; }
+  code {
+    background: var(--surface-2); border: 1px solid var(--border);
+    padding: 2px 7px; border-radius: 6px; font-size: 13.5px;
+  }
+  .checksum { font-size: 13px; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  th, td { text-align: left; padding: 11px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; }
+  footer { border-top: 1px solid var(--border); padding: 28px 0 56px; color: var(--muted); font-size: 14px; }
+  a { color: var(--accent); }
+  .row { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="logo">MT</span> Cambric Software</div>
+    <h1>Max Tools</h1>
+    <p class="tagline">
+      Every tool you use daily — for development, animation, freelance work and
+      running the numbers — in one searchable, keyboard-driven application.
+      Local-first and offline-capable.
+    </p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/Cambric-software/Max-Tools/releases/latest" id="latest">Download the latest release</a>
+      <a class="btn" href="https://github.com/Cambric-software/Max-Tools">Source on GitHub</a>
+      <a class="btn" href="#platforms">Choose a platform</a>
+    </div>
+    <p class="checksum" style="margin-top:16px">
+      Every download ships with a <code>.sha256</code> file. Verify it before installing.
+    </p>
+  </div>
+</header>
+
+<section id="platforms">
+  <div class="wrap">
+    <h2>Download for your platform</h2>
+    <p class="sub">Links always point at the newest published release — no version numbers to guess.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>🪟 Windows <span class="pill">x64</span></h3>
+        <p>Portable archive. Unzip anywhere and run <code>max_tools.exe</code>. No installer, no admin rights needed.</p>
+        <a class="btn primary" href="https://github.com/Cambric-software/Max-Tools/releases/latest/download/windows.zip">Download .zip</a>
+        <a class="btn" href="https://github.com/Cambric-software/Max-Tools/releases/latest/download/windows.zip.sha256">Checksum</a>
+      </div>
+      <div class="card">
+        <h3>🐧 Linux <span class="pill">x64</span></h3>
+        <p>Tarball for Debian, Ubuntu, Fedora and friends. Extract and run <code>max_tools</code> from the bundle folder.</p>
+        <a class="btn primary" href="https://github.com/Cambric-software/Max-Tools/releases/latest/download/linux.tar.gz">Download .tar.gz</a>
+        <a class="btn" href="https://github.com/Cambric-software/Max-Tools/releases/latest/download/linux.tar.gz.sha256">Checksum</a>
+      </div>
+      <div class="card">
+        <h3>🤖 Android <span class="pill">APK</span></h3>
+        <p>Universal APK for phones and tablets. Enable installs from unknown sources, then open the APK.</p>
+        <a class="btn primary" href="https://github.com/Cambric-software/Max-Tools/releases/latest/download/android.apk">Download .apk</a>
+        <a class="btn" href="https://github.com/Cambric-software/Max-Tools/releases/latest/download/android.apk.sha256">Checksum</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pillars">
+  <div class="wrap">
+    <h2>What is inside</h2>
+    <p class="sub">One registry, one search box, one keyboard-driven interface.</p>
+    <div class="pillars">
+      <div class="pillar"><strong>Developer tools</strong><span>Encoding, hashing, checksums, CSV, JSON, XML, regex, diffs, paths and file inspection.</span></div>
+      <div class="pillar"><strong>Animator tools</strong><span>Frame-rate and timecode maths, frame counts, render-time and asset-size estimation.</span></div>
+      <div class="pillar"><strong>Freelancer tools</strong><span>Quotes, invoices, milestone and retainer billing, rate conversions, payment terms.</span></div>
+      <div class="pillar"><strong>Business tools</strong><span>Project profitability, tax set-asides, budget burn-rate, break-even and cash-flow projection.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="requirements">
+  <div class="wrap">
+    <h2>Requirements</h2>
+    <div class="row">
+      <table>
+        <thead><tr><th>Platform</th><th>Needs</th></tr></thead>
+        <tbody>
+          <tr><td>Windows</td><td>Windows 10 or newer, 64-bit</td></tr>
+          <tr><td>Linux</td><td>glibc-based distribution, 64-bit, GTK 3 runtime</td></tr>
+          <tr><td>Android</td><td>Android 5.0 (API 21) or newer</td></tr>
+        </tbody>
+      </table>
+      <p class="checksum" style="max-width:34ch">
+        Max Tools runs entirely on your machine. It makes no required network
+        calls and uploads nothing.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="verify">
+  <div class="wrap">
+    <h2>Verify your download</h2>
+    <p class="sub">Checksums are published next to every artifact.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Windows</h3>
+        <p>Run this in PowerShell next to the downloaded files.</p>
+        <p><code>Get-FileHash .\windows.zip -Algorithm SHA256</code></p>
+        <p>Compare the output with the contents of <code>windows.zip.sha256</code>.</p>
+      </div>
+      <div class="card">
+        <h3>Linux</h3>
+        <p>Verify the archive you downloaded.</p>
+        <p><code>sha256sum -c linux.tar.gz.sha256</code></p>
+        <p>A result of <code>OK</code> means the file is intact.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>
+      © 2026 Cambric Software. Max Tools is proprietary software — see the
+      <a href="https://github.com/Cambric-software/Max-Tools/blob/main/LICENSE">licence</a>.
+    </p>
+    <p>
+      <a href="https://github.com/Cambric-software/Max-Tools">Source</a> ·
+      <a href="https://github.com/Cambric-software/Max-Tools/releases">All releases</a> ·
+      <a href="https://github.com/Cambric-software/Max-Tools/issues">Report an issue</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  // Show the newest published version next to the main download button.
+  (function () {
+    var api = 'https://api.github.com/repos/Cambric-software/Max-Tools/releases/latest';
+    var el = document.getElementById('latest');
+    if (!el) return;
+    fetch(api, { headers: { Accept: 'application/vnd.github+json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (data && data.tag_name) {
+          el.textContent = 'Download ' + data.tag_name;
+        }
+      })
+      .catch(function () { /* offline: keep the static label */ });
+  })();
+</script>
+
+</body>
+</html>
