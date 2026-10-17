@@ -54,29 +54,87 @@ telemetry. Your data stays on your machine.
 
 ## The four pillars
 
-### 1. Developer tools
+Max Tools currently ships **106 tools**: 52 developer-side tools and 54 for
+animators, freelancers and business work.
 
-Format conversion, encoding, hashing, checksums, diffs, JSON/CSV/XML/YAML
-handling, regex, text transforms, file inspection, archive handling, HTTP
-utilities, log analysis, and code formatting helpers.
+### 1. Developer tools (52)
 
-### 2. Animator tools
+| Area | Tools |
+|---|---|
+| Data | CSV parse/encode, JSON format/inspect, XML extract/escape |
+| Text | base64, URL encode/decode, case and identifier conversion, slug, pad, word count, dedupe, sort, filter, replace, regex match/replace/test, markdown→CSV, line diff, indent, join, split, character codes, CSV escaping |
+| Files | path join/basename/dirname/extension, exists, metadata, list, human size, checksum, verify checksum, create folder |
+| Security | hash (SHA-256/MD5/HMAC), verify text hash, obfuscate/deobfuscate, key generation |
+| Network | URL validate, query parameters, add parameters |
 
-Frame-rate and timecode conversion, frame-count calculations, shot-duration
-maths, render-time and asset-size estimation, resolution and aspect-ratio
-conversion, colour-space and bit-depth helpers, delivery-spec calculators.
+### 2. Animator tools (16)
 
-### 3. Freelancer tools
+Frames↔duration, timecode↔frames with correct drop-frame handling for 29.97
+and 59.94, frame-rate comparison, render-time estimation with machine scaling,
+video size from bitrate, bitrate for a target file size, resolution facts and
+aspect-ratio simplification, slow-motion frame maths, audio sample-to-frame
+alignment, frames per second, delivery-spec checking, frame step/stride, stops
+to exposure, and a reference list of standard rates.
 
-Quote and estimate builders, invoice generation, milestone and retainer
-billing, hourly/day/fixed-rate conversion, time tracking maths, payment
-terms and late-payment calculators, client communication templates.
+### 3. Freelancer tools (17)
 
-### 4. Business tools
+Hourly-to-project pricing with markup, day-rate to hourly, quotes with tax,
+invoice totals net of deposits, milestone plans, effective hourly rate,
+billable split and utilisation, retainer consumption and overage, late-payment
+interest, deposit-to-start, "can I take this job?", payment terms and ageing,
+rate cards, capacity, utilisation gap, minimum viable project price and quote
+splitting.
 
-Project profitability, cost versus revenue analysis, tax and set-aside
-calculations, budget burn-rate, cash-flow projection for a project,
-multi-currency conversion, break-even analysis.
+### 4. Business tools (21)
+
+Project profit including labour, markup↔margin, price from target margin, tax
+set-aside, break-even units, budget burn rate, cash-flow projection, currency
+conversion, cost per client, scope-change pricing, three-tier pricing, margin
+after tax, revenue target, monthly run rate, payback period, ROI, profit
+scenarios, discount impact, expense ratio, cost escalation and withholding.
+
+Every money tool states its assumptions rather than hiding them: tax applies
+after discount, margin is measured on the selling price while markup is on
+cost, and a loss never accrues tax.
+
+---
+
+## The command palette
+
+Press **Ctrl+K** (Cmd+K on macOS) anywhere, or use the bolt button on the home
+screen. Type what you want in plain English:
+
+```
+hash my password
+parse csv useHeaders yes
+convert 2gb
+list files in C:/data
+project profit revenue 5000 costs 1000
+```
+
+It shows exactly what it understood: the chosen tool, the word that matched,
+a confidence percentage, and any arguments it filled in. When a required
+argument is missing it asks for it instead of failing.
+
+**Correction.** Typos are recovered rather than rejected: transposed letters
+("teh" → "the"), missing letters ("checsum" → "checksum") and doubled letters
+all resolve to the right tool, with a "did you mean" note. Correction is
+deliberately conservative — paths, URLs and filenames are never rewritten, and
+an ambiguous sentence offers options instead of guessing.
+
+## Variables
+
+Chain tools together. Run one, save the result as a typed variable, and refer
+to it in the next command:
+
+```
+hash abc            → save as $result
+base64 encode $result
+```
+
+`$name` and `${name}` both work, numbers stay numbers, `\$` escapes a literal
+dollar, and an unknown name produces a clear error rather than an empty
+string. Variables persist between sessions.
 
 ---
 
@@ -298,15 +356,23 @@ Feature flags start conservative and are enabled deliberately:
 
 | Phase | Scope | Status |
 |---|---|---|
-| 0 | Rebrand to Max Tools, proprietary licence, dead-code cleanup | Complete |
-| 1 | Tool registry exposing the service library as callable tools | Next |
-| 2 | Command palette: English sentences + correction system | Planned |
-| 3 | Variable system: typed variables, interpolation, chaining | Planned |
-| 4 | Animator tools | Planned |
-| 5 | Freelancer and business/money tools | Planned |
-| 6 | Tool browser UI, categories, search, favourites | Planned |
-| 7 | Download website (Windows / Linux / Android) | Planned |
-| 8 | Remaining duplicate-service consolidation | Planned |
+| 0 | Rebrand to Max Tools, proprietary licence, dead-code cleanup | Done |
+| 1 | Tool registry, argument validation, search | Done |
+| 2 | Tool browser UI and generated runner screens | Done |
+| 3 | Variable system and the command-palette engine | Done |
+| 4 | Animator tools | Done |
+| 5 | Freelancer and business/money tools | Done |
+| 6 | Update system wired to GitHub Releases | Done |
+| 7 | Download page and GitHub Pages deployment | Done (needs Pages enabled) |
+| 8 | Remaining duplicate-service consolidation | Not started |
+
+**Still open before a public release**
+
+- Enable GitHub Pages (repository Settings → Pages → Source: GitHub Actions)
+  so the download page goes live.
+- Tag the first release (`v0.1.0`) to trigger the build-and-publish workflow.
+- Duplicate-service consolidation: 9 duplicated pairs remain where both copies
+  are referenced. Resolving them needs per-pair review, not a bulk delete.
 
 ---
 
