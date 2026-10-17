@@ -99,7 +99,7 @@ begin
     VersionsDir := ExpandConstant('{app}\versions');
     ActiveVersion := '';
     if FileExists(ExpandConstant('{app}\current.txt')) then
-      ActiveVersion := TrimString(LoadStringFromFile(ExpandConstant('{app}\current.txt')));
+      ActiveVersion := Trim(LoadStringFromFile(ExpandConstant('{app}\current.txt')));
 
     if DirExists(VersionsDir) then
     begin
