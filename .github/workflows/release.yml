@@ -147,7 +147,11 @@ jobs:
           PKG="max-tools"
           ROOT="debroot"
           INSTALL="$ROOT/usr/lib/max-tools"
-          mkdir -p "$INSTALL/versions/$VERSION"
+          # Every directory must exist before any file is written into it.
+          mkdir -p "$INSTALL/versions/$VERSION" \
+                   "$ROOT/DEBIAN" \
+                   "$ROOT/usr/share/applications" \
+                   "$ROOT/usr/share/icons/hicolor/scalable/apps"
           cp -r app/build/linux/x64/release/bundle/. "$INSTALL/versions/$VERSION/"
           printf '%s' "$VERSION" > "$INSTALL/current.txt"
           cat > "$ROOT/DEBIAN/control" <<EOF
@@ -163,7 +167,6 @@ jobs:
            Max Tools bundles 106 utilities behind one searchable interface and a
            command palette that understands plain English.
           EOF
-          mkdir -p "$ROOT/usr/share/applications"
           cat > "$ROOT/usr/share/applications/max-tools.desktop" <<EOF
           [Desktop Entry]
           Type=Application
@@ -174,7 +177,6 @@ jobs:
           Categories=Utility;Development;
           Terminal=false
           EOF
-          mkdir -p "$ROOT/usr/share/icons/hicolor/scalable/apps"
           cp app/windows/runner/resources/app_icon.ico "$ROOT/usr/share/icons/hicolor/scalable/apps/max-tools.ico" || true
           dpkg-deb --build --root-owner-group "$ROOT" "max-tools_$VERSION.deb"
           sha256sum "max-tools_$VERSION.deb" > "max-tools_$VERSION.deb.sha256"

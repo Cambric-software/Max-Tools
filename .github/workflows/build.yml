@@ -60,10 +60,10 @@ jobs:
           set -euo pipefail
           ROOT="debcheck"
           INSTALL="$ROOT/usr/lib/max-tools"
-          mkdir -p "$INSTALL/versions/0.0.0"
+          # Every directory must exist before any file is written into it.
+          mkdir -p "$INSTALL/versions/0.0.0" "$ROOT/DEBIAN" "$ROOT/usr/share/applications"
           cp -r app/build/linux/x64/release/bundle/. "$INSTALL/versions/0.0.0/"
           printf '%s' "0.0.0" > "$INSTALL/current.txt"
-          mkdir -p "$ROOT/DEBIAN" "$ROOT/usr/share/applications"
           cat > "$ROOT/DEBIAN/control" <<EOF
           Package: max-tools
           Version: 0.0.0
