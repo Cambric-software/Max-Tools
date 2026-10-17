@@ -23,7 +23,9 @@
 
 #define AppPublisher "Cambric Software"
 #define AppName "Max Tools"
-#define AppId "{{6F2B1C48-9D3E-4A17-8C55-2B7E4D9A1F30}"
+; A plain AppId is enough for upgrade detection and avoids escaped-brace
+; GUID syntax, which is easy to get subtly wrong.
+#define AppId "CambricMaxTools"
 
 [Setup]
 AppId={#AppId}
@@ -61,8 +63,9 @@ RestartApplications=no
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
+; The Start Menu entry is created unconditionally; the desktop shortcut is
+; optional, because plenty of users do not want one.
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"
-Name: "startmenuicon"; Description: "Create a Start menu shortcut"; GroupDescription: "Additional shortcuts:"; Flags: checkedonce
 
 [Files]
 ; The payload is staged by CI as ..\staging, already shaped as the version dir.
@@ -84,7 +87,7 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\versions\{#AppVersion}\{#AppE
 Filename: "{app}\versions\{#AppVersion}\{#AppExeName}"; Description: "Launch {#AppName}"; Flags: nowait postinstall skipifsilent
 
 [Code]
-{ Remove version folders left behind by updates, keeping the active one. }
+// Remove version folders left behind by updates, keeping the active one.
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
   ActiveVersion: String;
