@@ -394,11 +394,12 @@ void main() {
     });
 
     test('animator tools have landed; business arrives in phase 5', () {
-      // Phase 4 shipped the animator batch, so the category is populated.
-      // Business and freelancer stay declared but empty until phase 5.
       expect(registry.byCategory(ToolCategory.animator), isNotEmpty);
-      expect(registry.byCategory(ToolCategory.business), isEmpty);
-      expect(registry.byCategory(ToolCategory.freelancer), isEmpty);
+    });
+
+    test('business and freelance tools have landed', () {
+      expect(registry.byCategory(ToolCategory.business), isNotEmpty);
+      expect(registry.byCategory(ToolCategory.freelancer), isNotEmpty);
     });
   });
 }
