@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:max_tools/core/config/app_config.dart';
 import 'package:max_tools/core/config/cambric_config.dart';
 
 /// Guards the version numbers that have to agree across the project.
@@ -28,9 +29,20 @@ void main() {
         .group(1)!;
   });
 
-  test('pubspec carries the release version', () {
-    // "0.1.0+1": the part before the build number is the release version.
-    expect(pubspecVersion, startsWith('0.1.0'));
+  test('pubspec carries the version the running app reports', () {
+    // Compared against AppConfig, which is what the updater reads at runtime.
+    //
+    // This assertion used to name '0.1.0' literally, so it failed on every
+    // release and had to be edited each time. Comparing the two declarations
+    // instead means it checks what actually matters - that they agree - and
+    // never needs touching on a version bump.
+    expect(pubspecVersion.split('+').first, AppConfig.version);
+
+    // A build number is still required: Flutter uses it to order build
+    // numbers, and leaving it at 0 stops a rebuild being recognised.
+    final build = pubspecVersion.split('+');
+    expect(build.length, 2, reason: 'pubspec needs version+build');
+    expect(int.parse(build[1]), greaterThan(0));
   });
 
   test('the shipped config reports the release version, not the template one',
