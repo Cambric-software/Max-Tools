@@ -87,32 +87,33 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\versions\{#AppVersion}\{#AppE
 Filename: "{app}\versions\{#AppVersion}\{#AppExeName}"; Description: "Launch {#AppName}"; Flags: nowait postinstall skipifsilent
 
 [Code]
-// Remove version folders left behind by updates, keeping the active one.
+// Remove version folders left behind by updates.
+//
+// The folder this installer created is already tracked and removed by Inno's
+// own file handling. Anything else under versions/ is a leftover from an
+// update. Uninstalling means the user is removing the whole application, so
+// there is no reason to preserve the active version - keeping it would leave a
+// broken copy behind that nothing can launch.
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
-  ActiveVersion: String;
   VersionsDir: String;
   Found: TFindRec;
+  EntryName: String;
 begin
   if CurUninstallStep = usUninstall then
   begin
     VersionsDir := ExpandConstant('{app}\versions');
-    ActiveVersion := '';
-    if FileExists(ExpandConstant('{app}\current.txt')) then
-      ActiveVersion := Trim(LoadStringFromFile(ExpandConstant('{app}\current.txt')));
-
     if DirExists(VersionsDir) then
     begin
       if FindFirst(VersionsDir + '\*', Found) then
       try
         repeat
+          EntryName := Found.Name;
           if (Found.Attributes and FILE_ATTRIBUTE_DIRECTORY) <> 0 then
           begin
-            // Never delete the version we are about to run.
-            if (Found.Name <> ActiveVersion) and
-               (CompareText(Found.Name, '..') <> 0) and
-               (Found.Name <> '.') then
-              DelTree(VersionsDir + '\' + Found.Name, True, True, True);
+            if (CompareText(EntryName, '..') <> 0) and (EntryName <> '.') and
+               (CompareText(EntryName, '{#AppVersion}') <> 0) then
+              DelTree(VersionsDir + '\' + EntryName, True, True, True);
           end;
         until not FindNext(Found);
       finally
