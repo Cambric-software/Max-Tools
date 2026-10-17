@@ -12,7 +12,7 @@
   },
   "release": {
     "provider": "github",
-    "repository": "",
+    "repository": "Cambric-software/Max-Tools",
     "apiBase": "https://api.github.com"
   },
   "cache": {

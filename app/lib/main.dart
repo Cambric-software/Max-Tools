@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'core/ecosystem/cambric_ecosystem_service.dart';
 import 'core/ecosystem/product_registry_service.dart';
 import 'core/lifecycle/app_lifecycle_service.dart';
 import 'core/config/cambric_config.dart';
+import 'core/storage/cambric_paths.dart';
+import 'screens/home/home_screen.dart';
 import 'theme/app_theme.dart';
 import 'tools/catalog/tool_catalog.dart';
 import 'tools/tools_scope.dart';
-import 'widgets/cambric_first_run_wizard.dart';
+import 'tools/variable_store.dart';
 import 'cambric_app_shell.dart';
 
 Future<void> main() async {
@@ -17,6 +21,20 @@ Future<void> main() async {
   final config = await CambricConfig.load(
     'lib/core/config/cambric_config.json',
   );
+
+  // Variables persist between sessions so a palette result survives a restart.
+  VariableStore? variables;
+  try {
+    final supportDirectory = await CambricPaths.appData();
+    final store = VariableStore(
+      file: File('$supportDirectory${Platform.pathSeparator}variables.json'),
+    )..load();
+    variables = store;
+  } catch (_) {
+    // A missing support directory is not worth failing startup over; the
+    // palette simply will not remember anything this session.
+    variables = VariableStore();
+  }
 
   // Initialize application lifecycle tracking.
   final lifecycle = AppLifecycleService();
@@ -50,6 +68,7 @@ Future<void> main() async {
     CambricTemplateApp(
       config: config,
       existingProducts: products,
+      variables: variables,
     ),
   );
 }
@@ -57,46 +76,43 @@ Future<void> main() async {
 class CambricTemplateApp extends StatelessWidget {
   final CambricConfig config;
   final List<Map<String, dynamic>> existingProducts;
+  final VariableStore variables;
 
   const CambricTemplateApp({
     super.key,
     required this.config,
     required this.existingProducts,
+    required this.variables,
   });
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: config.productName,
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.system,
-      // One registry for the whole app: every tool screen, the command palette
-      // and automation all resolve tools through this instance.
-      home: ToolsScope(
-        registry: buildDefaultRegistry(),
-        child: Builder(
-          builder: (context) {
-            return CambricAppShell(
-              productName: config.productName,
-              version: config.version,
-              child: Center(
-                child: FilledButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (_) => CambricFirstRunWizard(
-                        existingProducts: existingProducts,
-                        onComplete: () => Navigator.of(context).pop(),
-                      ),
-                    );
-                  },
-                  child: const Text('Open Cambric Setup'),
-                ),
-              ),
-            );
-          },
+    // One registry for the whole app: every tool screen, the command palette
+    // and automation all resolve tools through this instance.
+    //
+    // The scope sits ABOVE MaterialApp, not inside `home:`. Anything pushed
+    // onto the Navigator is a sibling of `home`, so a scope placed there would
+    // be invisible to every pushed route, and tapping Tools or the command
+    // palette would crash the app.
+    return ToolsScope(
+      registry: buildDefaultRegistry(),
+      variables: variables,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: config.productName,
+        theme: AppTheme.light(),
+        darkTheme: AppTheme.dark(),
+        themeMode: ThemeMode.system,
+        // The product surface is the home screen. The template's single
+        // "Open Cambric Setup" button is now a card inside it, so the app
+        // opens on the tools rather than on a wizard.
+        home: CambricAppShell(
+          productName: config.productName,
+          version: config.version,
+          child: HomeScreen(
+            config: config,
+            existingProducts: existingProducts,
+          ),
         ),
       ),
     );

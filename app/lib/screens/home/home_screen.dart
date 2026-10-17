@@ -4,11 +4,24 @@ import '../settings/settings_screen.dart';
 import '../diagnostics/diagnostics_screen.dart';
 import '../tools/tools_screen.dart';
 import '../palette/command_palette_screen.dart';
+import '../updates/updates_screen.dart';
+import '../../core/config/cambric_config.dart';
+import '../../widgets/cambric_first_run_wizard.dart';
 import '../../widgets/responsive_layout.dart';
 import '../../widgets/state_widgets.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({
+    super.key,
+    required this.config,
+    this.existingProducts = const <Map<String, dynamic>>[],
+  });
+
+  /// Product configuration, used by the Updates screen.
+  final CambricConfig config;
+
+  /// Other Cambric products found on this machine.
+  final List<Map<String, dynamic>> existingProducts;
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +82,24 @@ class HomeScreen extends StatelessWidget {
       _navCard(context, icon: Icons.handyman_outlined, title: 'Tools', subtitle: 'Every tool in one searchable place',
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ToolsScreen()))),
       const SizedBox(height: 8),
+      _navCard(context, icon: Icons.tune_outlined, title: 'Cambric Setup',
+          subtitle: existingProducts.isEmpty
+              ? 'First run: register this product'
+              : 'Manage this product and the local product registry',
+          onTap: () => showDialog<void>(
+            context: context,
+            builder: (_) => CambricFirstRunWizard(
+              existingProducts: existingProducts,
+              onComplete: () => Navigator.of(context).pop(),
+            ),
+          )),
+      const SizedBox(height: 8),
       _navCard(context, icon: Icons.bolt_outlined, title: 'Command Palette', subtitle: 'Ask in plain English — Ctrl+K anywhere',
           onTap: () => showCommandPalette(context)),
+      const SizedBox(height: 8),
+      _navCard(context, icon: Icons.system_update_alt_outlined, title: 'Updates', subtitle: 'Check, download and verify a new version',
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => UpdatesScreen(config: config)))),
       const SizedBox(height: 8),
       _navCard(context, icon: Icons.storage_outlined, title: 'Cache', subtitle: 'View and clear cached data',
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CacheScreen()))),
