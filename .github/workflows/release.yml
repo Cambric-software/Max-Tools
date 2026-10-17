@@ -44,7 +44,9 @@ jobs:
           # The installer lays the app out as <root>/versions/<version>/ with a
           # current.txt pointer, which is what lets the app update itself later
           # without overwriting files Windows has open.
-          $version = $env:RELEASE_VERSION -replace '^v', ''
+          # Normalise: Inno Setup and dpkg both reject a pre-release
+          # suffix in a version, so v0.2.0-beta1 becomes 0.2.0.
+          $version = (($env:RELEASE_VERSION -replace '^v', '') -split '-')[0]
           New-Item -ItemType Directory -Force -Path staging | Out-Null
           Copy-Item "app/build/windows/x64/runner/Release/*" staging -Recurse -Force
           # current.txt has no trailing newline: the reader trims, but keeping
@@ -65,7 +67,7 @@ jobs:
       - name: Build the setup executable
         shell: pwsh
         run: |
-          $version = $env:RELEASE_VERSION -replace '^v', ''
+          $version = (($env:RELEASE_VERSION -replace '^v', '') -split '-')[0]
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           if (-not (Test-Path $iscc)) { throw "ISCC.exe not found at $iscc" }
           & $iscc "/DAppVersion=$version" "installer\max_tools.iss"
@@ -140,6 +142,8 @@ jobs:
           # install can also update itself in place.
           set -euo pipefail
           VERSION="${RELEASE_VERSION#v}"
+          # Strip any pre-release suffix: dpkg versions cannot contain it.
+          VERSION="${VERSION%%-*}"
           PKG="max-tools"
           ROOT="debroot"
           INSTALL="$ROOT/usr/lib/max-tools"

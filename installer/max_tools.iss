@@ -21,28 +21,6 @@
   #define AppExeName "max_tools.exe"
 #endif
 
-; VersionInfoVersion must be strictly numeric (a.b.c.d). A pre-release tag such
-; as 0.2.0-beta1 would otherwise abort the compile, so trim anything from the
-; first '-' and pad to four parts.
-#define SuffixPos Pos('{#AppVersion}', '-')
-#if SuffixPos > 0
-  #define VerBase Copy('{#AppVersion}', 1, SuffixPos - 1)
-#else
-  #define VerBase {#AppVersion}
-#endif
-#define DotCount StringCount(VerBase, '.')
-#if DotCount < 3
-  #if DotCount == 0
-    #define VerQuad {#VerBase}.0.0.0
-  #elif DotCount == 1
-    #define VerQuad {#VerBase}.0.0
-  #else
-    #define VerQuad {#VerBase}.0
-  #endif
-#else
-  #define VerQuad {#VerBase}
-#endif
-
 #define AppPublisher "Cambric Software"
 #define AppName "Max Tools"
 #define AppId "{{6F2B1C48-9D3E-4A17-8C55-2B7E4D9A1F30}"
@@ -53,7 +31,10 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
 AppPublisher={#AppPublisher}
-VersionInfoVersion={#VerQuad}
+; Must be strictly numeric. The release workflow normalises the tag
+; (v0.2.0-beta1 -> 0.2.0) before passing /DAppVersion, because Inno
+; rejects a pre-release suffix here and dpkg rejects one in a version too.
+VersionInfoVersion={#AppVersion}.0
 DefaultDirName={localappdata}\Programs\MaxTools
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
