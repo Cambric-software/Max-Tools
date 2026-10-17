@@ -145,15 +145,15 @@ string. Variables persist between sessions.
 git clone https://github.com/Cambric-software/Max-Tools.git
 cd Max-Tools
 
-# Verify the toolchain matches what this project expects
-.\scripts-doctor.ps1
-
 # Install dependencies and run the checks
 cd app
 flutter pub get
 flutter analyze        # must report: No issues found!
 flutter test           # must report: All tests passed!
 ```
+
+Requires Flutter 3.47+ / Dart 3.13+. Every push runs the same two checks in CI,
+so a local failure is never a surprise on the server.
 
 ### Running it
 
@@ -182,13 +182,10 @@ Max-Tools/
 ├── LICENSE                  # Proprietary — Cambric Software
 ├── README.md                # This file
 ├── SECURITY.md              # Security policy and reporting
-├── SETUP.md                 # First-time developer setup
 ├── cambric.manifest.json    # Product manifest (name, id, platforms, capabilities)
-├── cambric.lock             # Toolchain lock (Flutter/Dart versions)
-├── scripts-doctor.ps1       # Environment + drift checker
+├── cambric-icon-transparent.png  # Official Cambric mark
 ├── docs/                    # Architecture, development, testing, storage, updates
-├── scripts/                 # Generation and changelog tooling
-├── assets/branding/         # Brand assets
+├── assets/branding/         # Brand assets (Cambric logo source)
 └── app/                     # The Flutter application
     ├── pubspec.yaml
     ├── lib/
@@ -322,8 +319,8 @@ GitHub Actions workflows in `.github/workflows/`:
 | `test.yml` | Test-only run |
 | `analyze.yml` | Static analysis only |
 
-Release notes are generated with `scripts/cambric-changelog.ps1`. See
-[docs/RELEASES.md](docs/RELEASES.md).
+Release notes are generated automatically by GitHub from the commit history
+(`generate_release_notes`). See [docs/RELEASES.md](docs/RELEASES.md).
 
 ---
 
@@ -388,12 +385,14 @@ running build, then delete `app/build/` and re-run. This is a filesystem lock,
 not a code fault.
 
 **Toolchain version mismatch**
-Run `.\scripts-doctor.ps1` from the repository root. It reports the expected
-and actual Flutter/Dart versions and flags drift against `cambric.lock`.
+Requires Flutter 3.47+ / Dart 3.13+. If `flutter analyze` reports
+`experiment_not_enabled` for a language feature, your SDK is too old —
+upgrade Flutter rather than working around it in the source.
 
-**App shows the first-run wizard**
-That is expected on a fresh install. The wizard is part of the template
-bootstrap.
+**Update check reports "No release repository is configured"**
+The repository lives in `release.repository` in `cambric_config.json`. It is
+set to `Cambric-software/Max-Tools`. Updates also require `updates.enabled`,
+so a build with either missing deliberately downloads nothing.
 
 See [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for more.
 

@@ -55,10 +55,15 @@
     border-bottom: 1px solid var(--border);
   }
   .brand { display: flex; align-items: center; gap: 12px; font-weight: 600; letter-spacing: .2px; }
+  /* The official Cambric mark, not a stand-in. The logo file is square with
+     transparent padding, so it scales cleanly against the wordmark.
+     The mark's own dark panel measures about 1.06:1 against this page's
+     background, so its rounded-square silhouette disappears without an edge.
+     The ring restores that silhouette without altering the artwork. */
   .logo {
-    width: 34px; height: 34px; border-radius: 9px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 15px;
+    width: 38px; height: 38px; border-radius: 10px;
+    display: block; flex: none; object-fit: contain;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .14);
   }
   h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.15; margin: 28px 0 12px; }
   .tagline { font-size: clamp(16px, 2.2vw, 20px); color: var(--muted); max-width: 62ch; }
@@ -106,7 +111,7 @@
 
 <header>
   <div class="wrap">
-    <div class="brand"><span class="logo">MT</span> Cambric Software</div>
+    <div class="brand"><img class="logo" src="cambric-logo.png" alt="Cambric Software" width="38" height="38"> Cambric Software</div>
     <h1>Max Tools</h1>
     <p class="tagline">
       Every tool you use daily — for development, animation, freelance work and
@@ -208,6 +213,7 @@
 <footer>
   <div class="wrap">
     <p>
+      <img class="logo" src="cambric-logo.png" alt="" width="22" height="22" style="display:inline-block;vertical-align:-4px;margin-right:8px;border-radius:6px;box-shadow:0 0 0 1px rgba(255,255,255,.14)">
       © 2026 Cambric Software. Max Tools is proprietary software — see the
       <a href="https://github.com/Cambric-software/Max-Tools/blob/main/LICENSE">licence</a>.
     </p>

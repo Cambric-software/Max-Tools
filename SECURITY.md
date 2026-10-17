@@ -1,126 +1,160 @@
 # Security Policy
 
-Security policy and practices for Cambric applications built on this template.
+Security model, guarantees and reporting process for **Max Tools**.
 
 ---
 
 ## Security model
 
-Cambric applications are **local-first**. Security defaults are:
+Max Tools is **local-first**. Everything it does runs on the user's machine:
 
-- No remote authentication required
-- No telemetry or usage tracking by default
+- No account, sign-in or remote authentication
+- No telemetry, analytics or usage tracking
 - No mandatory cloud backend
-- User data stays on the device unless explicitly shared by the user
+- No network calls except the optional update check (off by default, see below)
+- User data stays on the device unless the user explicitly shares it
+
+The app reads and writes only inside the platform's application-support
+directory, resolved by `CambricPaths`.
 
 ---
 
-## Provided security infrastructure
+## What ships as secure by default
+
+These are real services in `app/lib/core/`, each with its own test suite.
+
+### Atomic writes
+
+`AtomicFileService` — every persistent write is write-to-temp then rename:
+
+- A file is committed only after the write fully succeeds
+- A crash mid-write cannot leave a truncated or corrupt file behind
+- Used by the variable store, settings and other persisted state
 
 ### Input sanitization
 
-`InputSanitizationService` — sanitize and validate all user input before storing, rendering, or sending:
+`InputSanitizationService` — for anything that reaches storage, a filename or
+the filesystem:
 
-- `trimWhitespace` — remove surrounding whitespace
-- `toSafeIdentifier` — normalize to safe alphanumeric identifier
-- `sanitizeFilename` — remove path traversal characters
-- `escapeHtml` — escape HTML special characters
+- `sanitizeFilename` — strips path traversal characters
+- `toSafeIdentifier` — normalises to a safe alphanumeric identifier
+- `escapeHtml` — escapes HTML metacharacters
 - `validateRequired`, `validateEmail`, `validateUrl`, `validateMinLength`
-- `looksLikeSecret` — detect accidental secret values in input
-
-### Atomic file writes
-
-`AtomicFileService` — all persistent writes use atomic write-then-rename:
-
-- Data is written to a temporary file first
-- The file is renamed (committed) only after a successful write
-- Prevents partial writes and file corruption on unexpected shutdown
-- Used by storage, cache, and backup subsystems
+- `looksLikeSecret` — flags accidental secret values in input
 
 ### Secret redaction
 
-`SecretRedactionService` — redact sensitive values before logging or exporting:
+`SecretRedactionService` — redacts before anything is logged or exported.
+Detects private keys, API keys, bearer tokens, GitHub tokens (`ghp_…`) and AWS
+access key IDs (`AKIA…`).
 
-- Detects private keys, API keys, tokens, passwords, GitHub tokens, AWS keys
-- `redact(string)` — redact a single string
-- `redactMap(map)` — redact all sensitive keys in a map
+- `redact(string)`
+- `redactMap(map)`
 
 ### Hashing and integrity
 
 `SecurityService`:
 
-- `sha256String`, `sha256Bytes`, `sha256File` — SHA-256 hashing
-- `constantTimeEquals` — timing-safe string comparison
+- `sha256String`, `sha256Bytes`, `sha256File`
+- `constantTimeEquals` — timing-safe comparison, so a checksum check cannot be
+  defeated by timing the response
 - `generateIntegrityTag` / `verifyIntegrityTag` — HMAC-SHA256
-- `verifyFileChecksum` — verify a file against an expected SHA-256 hash
+- `verifyFileChecksum` — verify a file against an expected SHA-256
 
 ### Access control
 
-`AccessControlService` — software-level capability gating:
-
-- `grant(subject, capability)` — grant a capability
-- `revoke(subject, capability)` — revoke a capability
-- `can(subject, capability)` — check permission
-
-### Update verification
-
-`UpdateVerificationService` — verifies downloaded packages before installation:
-
-- File existence check
-- Non-empty file check
-- SHA-256 checksum comparison against the published release checksum
-
-All release artifacts (Windows `.zip`, Linux `.tar.gz`, Android `.apk`) are published with a companion `.sha256` file. Verification is performed before any install step executes.
+`AccessControlService` — capability gating for bundled subsystems. Note this is
+**software-level**, not an OS sandbox: it stops a mis-wired feature, not a
+determined attacker.
 
 ---
 
-## Dependency auditing in CI
+## Update integrity
 
-The `security.yml` GitHub Actions workflow runs on every push and pull request:
+Updates are the one path that reaches the network, so it is the strictest.
 
-- `dart pub audit` — checks all transitive dependencies for known vulnerabilities
-- Grep scan of `lib/` for hardcoded credential patterns (API keys, passwords, tokens)
-- Check that no `.env` files have been committed to the repository
+- **Opt-in and gated.** Update checks run only when a release repository is
+  configured *and* the config flag is on. A half-configured build cannot phone
+  home.
+- **Never self-replacing.** Max Tools does not overwrite its own files while
+  running. It downloads, verifies, and tells you exactly how to install.
+- **Verified before use.** `UpdateVerificationService` checks existence,
+  non-emptiness and the SHA-256 checksum. A package that fails verification is
+  **deleted**, not offered.
+- **Version comparison cannot be fooled.** Segments compare numerically, so
+  `0.10.0` correctly beats `0.9.0`, and a pre-release never outranks a stable
+  release of the same number.
 
-`dart pub audit` runs with `continue-on-error: true` because upstream packages may carry informational advisories that do not affect this application. Review audit output in CI and address genuine vulnerabilities.
+Every published artifact ships a companion `.sha256` file:
 
----
+```
+windows.zip.sha256
+linux.tar.gz.sha256
+android.apk.sha256
+```
 
-## Secret scanning in developer tools
-
-`scripts-doctor.ps1` scans Dart source files for common secret patterns:
-
-- AWS access key IDs (`AKIA...`)
-- GitHub personal access tokens (`ghp_...`)
-- Private key headers
-- Generic `api_key =`, `password =`, `token =` assignments
-
-Run before committing:
+Verify before installing:
 
 ```powershell
-.\scripts-doctor.ps1
+Get-FileHash .\windows.zip -Algorithm SHA256
+# compare against windows.zip.sha256
 ```
 
 ---
 
-## What this template does NOT do
+## CI security gates
 
-- It does NOT implement OS keychain or secure enclave storage (requires platform plugins)
-- It does NOT implement OAuth or remote authentication flows
-- It does NOT send diagnostic data to remote servers
+The `Security` workflow runs on every push and pull request, plus weekly:
+
+| Check | Fails the build? |
+|---|---|
+| `dart pub audit` | No — informational advisories are surfaced, not fatal |
+| Hardcoded-secret grep over `lib/` (excluding tests) | **Yes** |
+| `.env` files committed to the repo | **Yes** |
+
+`dart pub audit` is intentionally `continue-on-error`: upstream packages carry
+informational advisories that do not affect a local-first desktop app. Review
+its output rather than ignoring it.
+
+The `Analyze` and `Test` workflows additionally gate every push, so a change
+that breaks static analysis or the 353-test suite cannot merge.
 
 ---
 
-## Reporting vulnerabilities
+## What Max Tools deliberately does NOT do
 
-Do not report security vulnerabilities in public GitHub issues.
+- It does **not** implement OS keychain or secure-enclave storage (would need
+  platform plugins)
+- It does **not** implement OAuth or any remote authentication flow
+- It does **not** send diagnostic data to any server
+- It does **not** execute code supplied by a downloaded file; tools are Dart
+  functions in the shipped binary
 
-Contact: **security@cambric.dev**
+Be clear about the first one: secrets are not stored in the OS keychain, so do
+not treat the app's storage as a place for long-lived credentials.
+
+---
+
+## Reporting a vulnerability
+
+**Do not open a public GitHub issue for a security vulnerability.**
+
+Report it privately through GitHub's security advisory form for this
+repository:
+
+> <https://github.com/Cambric-software/Max-Tools/security/advisories/new>
 
 Please include:
 
 1. A description of the vulnerability and its potential impact
-2. Steps to reproduce or a proof-of-concept
+2. Steps to reproduce, or a proof of concept
 3. The affected version(s)
+4. Your platform (Windows / Linux / Android)
 
-We will acknowledge receipt within 48 hours and aim to release a fix within 14 days for critical issues.
+You should expect an acknowledgement within **48 hours**, and a target fix
+within **14 days** for critical issues.
+
+**Security contact:** `security@cambric.dev`
+
+If that address is not monitored, use the GitHub advisory form above — it
+reaches the maintainers without needing a working email round-trip.

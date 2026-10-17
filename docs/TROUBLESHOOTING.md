@@ -33,17 +33,36 @@ Accept all licenses, then retry the build.
 
 ---
 
-## Version drift detected by doctor
+## Version drift between pubspec, config and manifest
 
-**Symptom:** `scripts-doctor.ps1` reports `VERSION DRIFT: pubspec=x.y.z config=a.b.c`
+**Symptom:** `flutter test` fails in
+`test/core/version_consistency_test.dart`, e.g. `expected: <0.1.0> actual:
+<1.0.0>`.
 
-**Cause:** `pubspec.yaml` and `cambric_config.json` have different versions.
+**Cause:** the three version sources disagree. This matters more than it
+looks: the update system compares `cambric_config.json`'s version against the
+published git tag, so a config claiming a *higher* version than the tag makes
+the app conclude it is already up to date and silently stop offering updates.
 
-**Fix:** Keep them in sync by always bumping both together:
-1. Update `version:` in `app/pubspec.yaml`
-2. Update `product.version` in `app/lib/core/config/cambric_config.json`
+**Fix:** bump all three together:
+1. `version:` in `app/pubspec.yaml`
+2. `product.version` in `app/lib/core/config/cambric_config.json`
+3. `version` in `app/cambric.manifest.json`
 
-Or add a release script to your CLI that updates both atomically.
+The test fails loudly so this cannot ship again.
+
+---
+
+## Update check says "no release repository is configured"
+
+**Symptom:** the Updates screen shows that message and downloads nothing.
+
+**Cause:** either `release.repository` is empty in
+`cambric_config.json`, or `updates.enabled` is false. Both are required —
+a half-configured build deliberately phones home to nothing.
+
+**Fix:** confirm `release.repository` is `Cambric-software/Max-Tools` and that
+the update flag is on. See [UPDATES.md](UPDATES.md).
 
 ---
 

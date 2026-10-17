@@ -1,12 +1,20 @@
 # Development
 
-How to develop, test, and build applications using this template.
+How to develop, test and build **Max Tools**.
 
 ---
 
 ## Setup
 
-See [SETUP.md](../SETUP.md) for initial project setup.
+```powershell
+git clone https://github.com/Cambric-software/Max-Tools.git
+cd Max-Tools\app
+flutter pub get
+```
+
+Requires Flutter 3.47+ / Dart 3.13+. There is no setup wizard — Max Tools is a
+finished product, not a template you instantiate. Product identity lives in
+`app/lib/core/config/cambric_config.json` and `app/cambric.manifest.json`.
 
 ---
 
@@ -149,10 +157,25 @@ flutter build apk --release
 
 ---
 
-## Running the doctor
+## Pre-commit checks
+
+The same two gates CI runs on every push:
 
 ```powershell
-.\scripts-doctor.ps1
+cd app
+flutter analyze        # must report: No issues found!
+flutter test           # must report: All tests passed!
 ```
 
-Returns exit code 0 on success, 1 on failure. Safe to use in CI.
+Consistency checks that used to need a separate doctor script now run as part
+of `flutter test`, so nothing can drift silently:
+
+| Check | Where |
+|---|---|
+| pubspec / config / manifest versions agree | `test/core/version_consistency_test.dart` |
+| Every tool is reachable and described | `test/tools/catalog_test.dart` |
+| Both tool halves clear 50 tools | `test/tools/business_catalog_ext_test.dart` |
+| Hardcoded secrets absent from `lib/` | `.github/workflows/security.yml` |
+
+Because the version check is a real test, a version bump that only edits one
+of the three files fails the build instead of shipping a broken update check.

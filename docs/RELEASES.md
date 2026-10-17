@@ -71,10 +71,10 @@ Configure your repository in `cambric_config.json`:
 
 ## Checklist before releasing
 
-- [ ] Version updated in `cambric_config.json` and `pubspec.yaml`
+- [ ] Version updated in `cambric_config.json`, `pubspec.yaml` **and**
+      `app/cambric.manifest.json` (all three must match)
 - [ ] `flutter analyze` passes
 - [ ] `flutter test` passes
-- [ ] `.\scripts-doctor.ps1` passes
-- [ ] No secrets in source code
+- [ ] No secrets in source code (`security.yml` gates this)
 - [ ] Documentation updated
 - [ ] Git tag created and pushed
