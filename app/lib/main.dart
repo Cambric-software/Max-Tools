@@ -7,6 +7,7 @@ import 'core/ecosystem/product_registry_service.dart';
 import 'core/lifecycle/app_lifecycle_service.dart';
 import 'core/config/cambric_config.dart';
 import 'core/storage/cambric_paths.dart';
+import 'core/updates/install_layout.dart';
 import 'screens/home/home_screen.dart';
 import 'theme/app_theme.dart';
 import 'tools/catalog/tool_catalog.dart';
@@ -16,6 +17,16 @@ import 'cambric_app_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Self-healing handoff: if a newer version was activated while this copy
+  // was not running (for example the user launched an old desktop shortcut),
+  // start that version and exit instead of running a stale build. Running the
+  // version already on disk is better than exiting with nothing, so failure
+  // here falls through rather than blocking startup.
+  final handoffResult = await handoff();
+  if (handoffResult == HandoffAction.relaunchActiveVersion) {
+    exit(0);
+  }
 
   // Load central configuration.
   final config = await CambricConfig.load(

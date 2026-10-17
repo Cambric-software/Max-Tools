@@ -17,6 +17,7 @@ import '../config/cambric_config.dart';
 import '../updates/release_service.dart';
 import '../updates/update_service.dart';
 import '../updates/update_state.dart';
+import '../updates/install_layout.dart';
 import '../updates/update_verification_service.dart';
 
 /// The outcome of looking for an update.
@@ -202,6 +203,80 @@ class UpdateCenter {
   /// Why the last download failed, when it did.
   String? get lastError => _lastError;
   String? _lastError;
+
+  // ── Installing a verified download ────────────────────────────────────
+  //
+  // Installation never overwrites files that are in use. The verified package
+  // is unpacked into a new version directory and a pointer is moved, so a
+  // failure at any point leaves the running version untouched and rollback is
+  // a single write.
+
+  /// The install layout for the running build.
+  ///
+  /// Null when the app is not running from a versioned install, in which case
+  /// self-update is impossible and only reinstalling works.
+  InstallLayout? get layout {
+    final detected = InstallLayout.detect();
+    return detected.isVersioned ? detected : null;
+  }
+
+  /// Whether this build can update itself in place.
+  bool get canSelfUpdate => layout != null;
+
+  /// Unpack a verified download and make it the active version.
+  ///
+  /// Returns the outcome rather than throwing; [InstallOutcome.message] says
+  /// what went wrong. The running version is not modified at any point.
+  Future<InstallOutcome> installDownloaded(String version) async {
+    final resolved = layout;
+    if (resolved == null) {
+      return const InstallOutcome.failure(
+        'This copy of Max Tools was not installed with the setup executable, '
+        'so it cannot update itself. Download and run the installer again.',
+      );
+    }
+    final package = _updates.downloadedPackage;
+    if (package == null) {
+      return const InstallOutcome.failure('Nothing has been downloaded yet.');
+    }
+    final installer = UpdateInstaller(resolved);
+    final outcome = await installer.stage(package: package, version: version);
+    if (outcome.ok) {
+      // Keep one older version around so rollback always has a target.
+      await installer.prune();
+    }
+    return outcome;
+  }
+
+  /// Point the install back at [version] without downloading anything.
+  Future<InstallOutcome> rollbackTo(String version) async {
+    final resolved = layout;
+    if (resolved == null) {
+      return const InstallOutcome.failure(
+        'This copy of Max Tools cannot change versions in place.',
+      );
+    }
+    return UpdateInstaller(resolved).rollbackTo(version);
+  }
+
+  /// The version to return to when something went wrong with the last update.
+  ///
+  /// This is the version the install was on before the newest one was
+  /// activated, which is exactly what a rollback needs.
+  String? get rollbackTarget => _rollbackTarget;
+  String? _rollbackTarget;
+
+  /// Remember the version an update replaced, so it can be restored later.
+  void rememberRollbackTarget(String? version) {
+    if (version != null && version.isNotEmpty) _rollbackTarget = version;
+  }
+
+  /// Versions currently present on disk, newest last.
+  Future<List<String>> installedVersions() async {
+    final resolved = layout;
+    if (resolved == null) return <String>[];
+    return UpdateInstaller(resolved).installedVersions();
+  }
 
   /// Checks once on startup without blocking the UI.
   ///

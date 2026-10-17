@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import '../../core/config/cambric_config.dart';
+import '../../core/updates/install_layout.dart';
 import '../../core/updates/update_center.dart';
 
 /// Shows the update state and the actions available.
@@ -36,9 +37,65 @@ class _UpdatesScreenState extends State<UpdatesScreen> {
   File? _verifiedPackage;
   double? _progress;
 
+  /// True once a verified download is waiting to be installed.
+  bool get _readyToInstall =>
+      _verifiedPackage != null && (_check?.isUpdateAvailable ?? false);
+
+  /// Start installing the verified download, then restart into it.
+  Future<void> _installAndRestart() async {
+    final version = _check?.latestVersion;
+    if (version == null || version.isEmpty) return;
+    setState(() {
+      _working = true;
+      _downloadNote = null;
+    });
+
+    final outcome = await _centre.installDownloaded(version);
+    if (!mounted) return;
+    if (!outcome.ok) {
+      setState(() {
+        _working = false;
+        _downloadNote = outcome.message ?? 'The update could not be installed.';
+      });
+      return;
+    }
+
+    // Remember what we came from so rollback stays available.
+    _centre.rememberRollbackTarget(outcome.previousVersion);
+    setState(() {
+      _working = false;
+      _downloadNote = 'Installed $version. Restarting...';
+    });
+
+    // Hand over to the new version and exit. The running files are never
+    // touched, so this cannot fail half-way.
+    await relaunchVersion(version, layout: _centre.layout);
+  }
+
+  /// Return to the previous version.
+  Future<void> _rollback(String version) async {
+    setState(() {
+      _working = true;
+      _downloadNote = null;
+    });
+    final outcome = await _centre.rollbackTo(version);
+    if (!mounted) return;
+    setState(() {
+      _working = false;
+      _downloadNote = outcome.ok
+          ? 'Switched back to $version. Restarting...'
+          : (outcome.message ?? 'Could not switch back to $version.');
+    });
+    if (outcome.ok) {
+      await relaunchVersion(version, layout: _centre.layout);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    // The centre is the single source of truth, including the rollback target
+    // recorded by an update earlier in this session.
     _centre = widget.centre ?? UpdateCenter(config: widget.config);
   }
 
@@ -162,19 +219,50 @@ class _UpdatesScreenState extends State<UpdatesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     const Text(
-                      'The download passed its checksum. To finish installing:',
+                      'The download passed its checksum.',
                     ),
                     const SizedBox(height: 8),
-                    Text(UpdateCenter.installHelp(currentPlatformKey())),
+                    if (_centre.canSelfUpdate)
+                      const Text(
+                        'Installing adds the new version alongside the current '
+                        'one and switches to it on restart. Your current '
+                        'version stays on disk, so you can go back at any time.',
+                      )
+                    else
+                      Text(
+                        'This copy of Max Tools was not installed with the '
+                        'setup executable, so it cannot update itself.\n\n'
+                        '${UpdateCenter.installHelp(currentPlatformKey())}',
+                      ),
                   ],
                 ),
               ),
             ),
           ],
+          if (_readyToInstall) ...<Widget>[
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              onPressed: _working ? null : _installAndRestart,
+              icon: const Icon(Icons.restart_alt),
+              label: Text(
+                'Install ${_check!.latestVersion} and restart',
+              ),
+            ),
+          ],
+          if (_centre.rollbackTarget != null) ...<Widget>[
+            const SizedBox(height: 24),
+            OutlinedButton.icon(
+              onPressed:
+                  _working ? null : () => _rollback(_centre.rollbackTarget!),
+              icon: const Icon(Icons.history),
+              label: Text('Go back to version ${_centre.rollbackTarget}'),
+            ),
+          ],
           const SizedBox(height: 24),
           const Text(
-            'Max Tools never replaces its own files while running. Downloads '
-            'are verified before they are offered for install.',
+            'Max Tools never replaces its own files while running. Each update '
+            'is unpacked into its own folder and only becomes active after you '
+            'restart, so a failed install cannot damage the version you have.',
             style: TextStyle(fontSize: 12),
           ),
         ],
