@@ -155,6 +155,34 @@ flutter test           # must report: All tests passed!
 Requires Flutter 3.47+ / Dart 3.13+. Every push runs the same two checks in CI,
 so a local failure is never a surprise on the server.
 
+### Installing
+
+**Recommended: use the installer.** It installs per-user (no admin rights),
+adds a desktop and Start Menu shortcut, provides an uninstaller, and lays the
+app out so it can update itself later:
+
+```
+%LOCALAPPDATA%\Programs\MaxTools\
+  current.txt              the active version
+  versions\0.1.0\          a complete, independent copy
+```
+
+- **Windows** — `MaxTools-Setup-<version>.exe` (Inno Setup)
+- **Linux** — `max-tools_<version>.deb` (installs under `/usr/lib/max-tools`)
+- **Android** — the `.apk` installs in one tap
+
+**Portable copies still work.** `windows.zip` and `linux.tar.gz` run fine from
+anywhere, but a portable copy has no versioned layout, so it cannot update
+itself. Max Tools detects this, refuses to self-update rather than risking a
+broken install, and tells you to reinstall.
+
+### How updates apply
+
+An update never overwrites files that are running. It unpacks the new version
+into its own folder and moves a pointer; the new version starts on your next
+launch. If anything goes wrong the previous version is untouched and still on
+disk, and one button puts it back.
+
 ### Running it
 
 ```powershell

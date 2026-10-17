@@ -78,3 +78,21 @@ Configure your repository in `cambric_config.json`:
 - [ ] No secrets in source code (`security.yml` gates this)
 - [ ] Documentation updated
 - [ ] Git tag created and pushed
+
+The `Build` workflow already compiles the Windows installer and packages the
+`.deb` on every push, so a broken installer fails long before a tag is cut.
+The release then publishes:
+
+| Asset | What it is |
+|---|---|
+| `MaxTools-Setup-<version>.exe` | Windows installer, per-user |
+| `MaxTools-Setup.exe` | Stable alias of the same file, for the download page |
+| `windows.zip` | Portable Windows build |
+| `max-tools_<version>.deb` | Linux package, versioned layout |
+| `max-tools.deb` | Stable alias of the same package |
+| `linux.tar.gz` | Portable Linux build |
+| `android.apk` | Android build |
+
+The asset list is assembled from what each job actually produced, with
+`fail_on_unmatched_files`, so a failed platform cannot leave a dead download
+button.
