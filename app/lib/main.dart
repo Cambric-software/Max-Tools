@@ -13,7 +13,7 @@ import 'theme/app_theme.dart';
 import 'tools/catalog/tool_catalog.dart';
 import 'tools/tools_scope.dart';
 import 'tools/variable_store.dart';
-import 'cambric_app_shell.dart';
+import 'core/cambric_app_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

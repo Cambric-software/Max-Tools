@@ -7,10 +7,10 @@ library;
 
 import 'dart:io';
 
-import '../../services/library/data/xml_service.dart';
-import '../../services/library/files/file_metadata_service.dart';
-import '../../services/library/security/encryption_service.dart';
-import '../../services/library/system/uri_service.dart';
+import '../../tools/library/data/xml_service.dart';
+import '../../tools/library/files/file_metadata_service.dart';
+import '../../tools/library/security/encryption_service.dart';
+import '../../tools/library/system/uri_service.dart';
 import '../tool_descriptor.dart';
 
 /// Tools that touch the filesystem, URLs and the machine.

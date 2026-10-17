@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'widgets/cambric_version_label.dart';
+// Relative to lib/core/ after the move out of lib/, where it sat loose beside
+// main.dart.
+import '../widgets/cambric_version_label.dart';
 
 class CambricAppShell extends StatelessWidget {
   final String productName;

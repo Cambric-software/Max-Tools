@@ -7,10 +7,10 @@ library;
 
 import 'dart:io';
 
-import '../../services/library/data/csv_service.dart';
-import '../../services/library/data/json_service.dart';
-import '../../services/library/files/checksum_service.dart';
-import '../../services/library/security/hash_service.dart';
+import '../../tools/library/data/csv_service.dart';
+import '../../tools/library/data/json_service.dart';
+import '../../tools/library/files/checksum_service.dart';
+import '../../tools/library/security/hash_service.dart';
 import '../tool_descriptor.dart';
 
 /// Tools for developers: text, data and integrity helpers.
