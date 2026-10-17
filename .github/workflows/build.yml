@@ -58,8 +58,15 @@ jobs:
           # Mirrors the release job so a broken control file fails on push
           # rather than during a tagged release.
           set -euo pipefail
+          PKG="max-tools"
           ROOT="debcheck"
-          INSTALL="$ROOT/usr/lib/max-tools"
+          # RELATIVE path for building the tree, ABSOLUTE for anything the
+          # installed system will execute or read. Conflating the two put
+          # "debroot/usr/lib/max-tools/..." into the desktop Exec, which means
+          # the launcher would resolve it against the user's working directory
+          # and never start the app.
+          INSTALL_ABS="/usr/lib/max-tools"
+          INSTALL="$ROOT$INSTALL_ABS"
           # Every directory must exist before any file is written into it.
           mkdir -p "$INSTALL/versions/0.0.0" "$ROOT/DEBIAN" "$ROOT/usr/share/applications"
           cp -r app/build/linux/x64/release/bundle/. "$INSTALL/versions/0.0.0/"
@@ -81,7 +88,7 @@ jobs:
           Type=Application
           Name=Max Tools
           Comment=All-in-one toolkit
-          Exec=$INSTALL/versions/0.0.0/max_tools
+          Exec=$INSTALL_ABS/versions/0.0.0/max_tools
           Icon=max-tools
           Categories=Utility;Development;
           Terminal=false
