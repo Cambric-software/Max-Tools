@@ -126,8 +126,11 @@ class IntentParser {
 
   static final RegExp _numberPattern = RegExp(r'-?\d+(?:\.\d+)?');
   static final RegExp _wordPattern = RegExp(r'[A-Za-z]+');
-  static final RegExp _pathPattern =
-      RegExp(r'[\w\-./\\: ]+[\\/][\w\-./\\: ]*');
+  static final RegExp _pathPattern = RegExp(
+    // A drive letter, UNC-ish prefix, home dir, or relative path — with no
+    // embedded spaces, so the surrounding sentence is never swallowed.
+    r'(?:[A-Za-z]:[\\/]|~[\\/]|\.{1,2}[\\/]|/)[^\s,;]*',
+  );
 
   /// Multipliers for recognised units, so "2gb" reads as a byte count.
   static const Map<String, int> _unitMultipliers = <String, int>{
@@ -534,15 +537,11 @@ class IntentParser {
 
   static String? _firstPath(String sentence) {
     for (final match in _pathPattern.allMatches(sentence)) {
-      final candidate = match.group(0)!.trim();
-      if (candidate.contains('/') || candidate.contains(r'\')) {
-        // Trim a leading verb if the regex swallowed one.
-        final cleaned = candidate.replaceFirst(
-          RegExp(r'^(in|at|from|to|file|folder|path)\s+', caseSensitive: false),
-          '',
-        );
-        return cleaned;
-      }
+      final candidate = match.group(0)!.trim().replaceAll(RegExp(r'[.,;:]+$'), '');
+      if (candidate.isEmpty) continue;
+      // A bare "/" is punctuation, not a path.
+      if (candidate == '/' || candidate == '\\') continue;
+      return candidate;
     }
     return null;
   }

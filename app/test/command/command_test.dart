@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:max_tools/command/corrector.dart';
 import 'package:max_tools/command/intent_parser.dart';
 import 'package:max_tools/command/text_distance.dart';
 import 'package:max_tools/tools/catalog/tool_catalog.dart';
@@ -259,7 +258,7 @@ void main() {
         final intent = parser.parse(sentence);
         for (final candidate in intent.candidates) {
           expect(registry.contains(candidate.tool.id), isTrue,
-              reason: '${sentence} produced unknown ${candidate.tool.id}');
+              reason: '$sentence produced unknown ${candidate.tool.id}');
         }
       }
     });

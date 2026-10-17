@@ -3,6 +3,7 @@ import '../cache/cache_screen.dart';
 import '../settings/settings_screen.dart';
 import '../diagnostics/diagnostics_screen.dart';
 import '../tools/tools_screen.dart';
+import '../palette/command_palette_screen.dart';
 import '../../widgets/responsive_layout.dart';
 import '../../widgets/state_widgets.dart';
 
@@ -14,8 +15,13 @@ class HomeScreen extends StatelessWidget {
     final isWide = ResponsiveLayout.isDesktop(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cambric App'),
+        title: const Text('Max Tools'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.bolt_outlined),
+            tooltip: 'Command palette (Ctrl+K)',
+            onPressed: () => showCommandPalette(context),
+          ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             tooltip: 'Settings',
@@ -62,6 +68,9 @@ class HomeScreen extends StatelessWidget {
       const SizedBox(height: 16),
       _navCard(context, icon: Icons.handyman_outlined, title: 'Tools', subtitle: 'Every tool in one searchable place',
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ToolsScreen()))),
+      const SizedBox(height: 8),
+      _navCard(context, icon: Icons.bolt_outlined, title: 'Command Palette', subtitle: 'Ask in plain English — Ctrl+K anywhere',
+          onTap: () => showCommandPalette(context)),
       const SizedBox(height: 8),
       _navCard(context, icon: Icons.storage_outlined, title: 'Cache', subtitle: 'View and clear cached data',
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CacheScreen()))),
