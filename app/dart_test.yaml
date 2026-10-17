@@ -1,0 +1,15 @@
+# Test runner settings for Max Tools.
+#
+# Concurrency is pinned to 1 on purpose. Several suites touch the filesystem
+# and run real widget bindings; running them in parallel isolates on this
+# machine (OneDrive-backed, low core count) deadlocks the runner rather than
+# failing a test. Serial runs take about ten seconds, which is the right
+# trade for a suite that has to stay trustworthy.
+#
+# To investigate a suspected race, run a subset with:
+#   flutter test --concurrency=4 test/core
+concurrency: 1
+
+# Fail the run if a test leaves a pending timer behind. This is how the
+# palette's Ctrl+K keyboard handler was caught leaking.
+timeout: 60s

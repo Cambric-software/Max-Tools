@@ -24,12 +24,29 @@ void main() {
       expect(registry.length, greaterThanOrEqualTo(50));
     });
 
-    test('every tool is reachable, described and dotted', () {
+    test('animator, freelancer and business are all represented', () {
+      final categories =
+          registry.categoryCounts().keys.map((c) => c.name).toSet();
+      expect(categories, containsAll(<String>[
+        'developer', 'data', 'file', 'security', 'network', 'animator',
+      ]));
+    });
+
+    test('every tool is reachable and described', () {
       for (final tool in registry.all()) {
         expect(tool.id, contains('.'), reason: tool.id);
         expect(tool.name.trim(), isNotEmpty, reason: tool.id);
         expect(tool.description.trim(), isNotEmpty, reason: tool.id);
-        expect(tool.parameters, isNotEmpty, reason: '${tool.id} takes no input');
+      }
+    });
+
+    test('a tool that takes no input still runs', () async {
+      final parameterless = registry.all().where((t) => t.parameters.isEmpty);
+      expect(parameterless, isNotEmpty,
+          reason: 'expected at least one no-input tool such as a reference list');
+      for (final tool in parameterless) {
+        final result = await registry.run(tool.id, <String, dynamic>{});
+        expect(result.success, isTrue, reason: tool.id);
       }
     });
 
@@ -376,10 +393,10 @@ void main() {
       );
     });
 
-    test('animator and business categories exist for later phases', () {
-      // Declared on the enum so the palette can group them before any tool
-      // lands; asserts the taxonomy is ready for phases 4 and 5.
-      expect(registry.byCategory(ToolCategory.animator), isEmpty);
+    test('animator tools have landed; business arrives in phase 5', () {
+      // Phase 4 shipped the animator batch, so the category is populated.
+      // Business and freelancer stay declared but empty until phase 5.
+      expect(registry.byCategory(ToolCategory.animator), isNotEmpty);
       expect(registry.byCategory(ToolCategory.business), isEmpty);
       expect(registry.byCategory(ToolCategory.freelancer), isEmpty);
     });

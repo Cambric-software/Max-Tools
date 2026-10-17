@@ -6,6 +6,7 @@ library;
 
 import '../tool_descriptor.dart';
 import '../tool_registry.dart';
+import 'animator_catalog.dart';
 import 'developer_catalog.dart';
 import 'system_catalog.dart';
 import 'text_catalog.dart';
@@ -17,6 +18,7 @@ ToolRegistry buildDefaultRegistry() {
     ...developerTools(),
     ...textTools(),
     ...systemTools(),
+    ...animatorTools(),
   ]);
   return registry;
 }
