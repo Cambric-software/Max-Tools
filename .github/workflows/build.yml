@@ -53,6 +53,41 @@ jobs:
       - name: Build Linux
         working-directory: app
         run: flutter build linux --release
+      - name: Verify the .deb packaging step
+        run: |
+          # Mirrors the release job so a broken control file fails on push
+          # rather than during a tagged release.
+          set -euo pipefail
+          ROOT="debcheck"
+          INSTALL="$ROOT/usr/lib/max-tools"
+          mkdir -p "$INSTALL/versions/0.0.0-ci"
+          cp -r app/build/linux/x64/release/bundle/. "$INSTALL/versions/0.0.0-ci/"
+          printf '%s' "0.0.0-ci" > "$INSTALL/current.txt"
+          mkdir -p "$ROOT/DEBIAN" "$ROOT/usr/share/applications"
+          cat > "$ROOT/DEBIAN/control" <<EOF
+          Package: max-tools
+          Version: 0.0.0-ci
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Maintainer: Cambric Software <support@cambric.dev>
+          Depends: libgtk-3-0, libstdc++6
+          Installed-Size: $(du -sk "$INSTALL" | cut -f1)
+          Description: All-in-one toolkit for developers, animators, freelancers and business users.
+           Max Tools bundles 106 utilities behind one searchable interface.
+          EOF
+          cat > "$ROOT/usr/share/applications/max-tools.desktop" <<EOF
+          [Desktop Entry]
+          Type=Application
+          Name=Max Tools
+          Comment=All-in-one toolkit
+          Exec=$INSTALL/versions/0.0.0-ci/max_tools
+          Icon=max-tools
+          Categories=Utility;Development;
+          Terminal=false
+          EOF
+          dpkg-deb --build --root-owner-group "$ROOT" max-tools-check.deb
+          dpkg-deb --info max-tools-check.deb | head -20
       - uses: actions/upload-artifact@v4
         with:
           name: linux-bundle
@@ -77,4 +112,56 @@ jobs:
         with:
           name: windows-build
           path: app/build/windows/x64/runner/Release
+          retention-days: 7
+
+  build-windows-installer:
+    name: Windows installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Install dependencies
+        working-directory: app
+        run: flutter pub get
+      - name: Build Windows
+        working-directory: app
+        run: flutter build windows --release
+
+      - name: Stage the versioned install layout
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path staging | Out-Null
+          Copy-Item "app/build/windows/x64/runner/Release/*" staging -Recurse -Force
+          [System.IO.File]::WriteAllText("$PWD/staging-current.txt", "0.0.0-ci")
+
+      - name: Install Inno Setup
+        run: choco install innosetup --yes --no-progress --limit-output
+
+      - name: Compile the installer script
+        shell: pwsh
+        run: |
+          # Compiling is the point of this job: it proves the .iss is valid
+          # Inno Setup and that the staged layout satisfies it, long before a
+          # tag turns it into something users download.
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { throw "ISCC.exe not found at $iscc" }
+          & $iscc "/DAppVersion=0.0.0-ci" "installer\max_tools.iss"
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with $LASTEXITCODE" }
+
+      - name: Confirm the installer was produced
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem release-out -Filter "*.exe" -ErrorAction SilentlyContinue
+          if (-not $exe) { throw "Inno Setup produced no installer" }
+          $exe | Select-Object Name, Length
+          if ($exe[0].Length -lt 100000) {
+            throw "Installer is implausibly small ($($exe[0].Length) bytes)"
+          }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: release-out/
           retention-days: 7
