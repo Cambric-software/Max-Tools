@@ -14,11 +14,17 @@ import 'package:flutter/material.dart';
 import '../apps/api_tester_tool.dart';
 import '../apps/colour_toolkit_tool.dart';
 import '../apps/developer_toolkit_tool.dart';
+import '../apps/archive_tool.dart';
 import '../apps/disk_analyser_tool.dart';
 import '../apps/duplicate_finder_tool.dart';
+import '../apps/file_encryption_tool.dart';
 import '../apps/file_shredder_tool.dart';
 import '../apps/hash_tool.dart';
+import '../apps/image_tool.dart';
 import '../apps/notes_tool.dart';
+import '../apps/password_vault_tool.dart';
+import '../apps/pdf_tool.dart';
+import '../apps/qr_tool.dart';
 import '../apps/reading_aid_tool.dart';
 import '../apps/security_scan_tool.dart';
 import '../apps/text_toolkit_tool.dart';
@@ -58,6 +64,30 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const SecurityScanTool(),
+    ),
+    ToolDescriptor(
+      id: 'security.vault',
+      name: 'Password vault',
+      description: 'Store passwords encrypted on this device behind one '
+          'master password.',
+      category: ToolCategory.security,
+      icon: Icons.lock_outline,
+      howTo: 'Create a master password, then add entries. Tap an entry to edit '
+          'it, or the key to copy its password. The vault locks when you leave '
+          'the app.',
+      tags: const <String>[
+        'password', 'vault', 'passwords', 'login', 'credentials', 'encrypted',
+        'aes', 'pbkdf2', 'master password', 'secure', 'store', 'keychain',
+      ],
+      synonyms: const <String>[
+        'save a password',
+        'store my passwords',
+        'password manager',
+        'encrypted password list',
+        'remember this login',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const PasswordVaultTool(),
     ),
     ToolDescriptor(
       id: 'money.wealth',
@@ -255,6 +285,79 @@ ToolRegistry buildDefaultRegistry() {
       screen: (BuildContext context) => const ColourToolkitTool(),
     ),
     ToolDescriptor(
+      id: 'media.image',
+      name: 'Image resize & convert',
+      description: 'Resize a photo, convert between JPEG, PNG and WebP, and '
+          'see exactly how much smaller it became.',
+      category: ToolCategory.media,
+      icon: Icons.photo_size_select_large,
+      howTo: 'Choose an image, set a new width or keep the current one, pick '
+          'JPEG, PNG or WebP, then process. The result is written beside the '
+          'original.',
+      tags: const <String>[
+        'image', 'photo', 'picture', 'resize', 'resize image', 'compress',
+        'convert', 'jpeg', 'jpg', 'png', 'webp', 'shrink', 'scale',
+        'thumbnail', 'quality',
+      ],
+      synonyms: const <String>[
+        'make this photo smaller',
+        'resize an image',
+        'convert png to jpg',
+        'compress a picture',
+        'change image size',
+        'convert to webp',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const ImageTool(),
+    ),
+    ToolDescriptor(
+      id: 'media.qr',
+      name: 'QR & barcode',
+      description: 'Make QR codes and common barcodes, save them as PNG, and '
+          'read a QR code from an image.',
+      category: ToolCategory.media,
+      icon: Icons.qr_code_2,
+      howTo: 'Type the content, pick a format and press Save PNG. To read a '
+          'code, choose an image of it and press Read the code.',
+      tags: const <String>[
+        'qr', 'qr code', 'barcode', 'code128', 'ean13', 'code39', 'scan',
+        'scan qr', 'read qr', 'generate qr', 'label', 'link', 'wifi',
+      ],
+      synonyms: const <String>[
+        'make a qr code',
+        'scan a qr code',
+        'read a qr code from a picture',
+        'create a barcode',
+        'qr code for a link',
+        'share wifi as a qr code',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const QrTool(),
+    ),
+    ToolDescriptor(
+      id: 'documents.pdf',
+      name: 'PDF builder',
+      description: 'Turn text or a set of images into a clean PDF, with page '
+          'size, text size and page numbers.',
+      category: ToolCategory.documents,
+      icon: Icons.picture_as_pdf_outlined,
+      howTo: 'Choose Text or Images, set the page size, choose where to save '
+          'it, then press Build. Each image becomes one page.',
+      tags: const <String>[
+        'pdf', 'make pdf', 'create pdf', 'text to pdf', 'images to pdf',
+        'scan', 'document', 'page', 'print', 'a4', 'letter', 'convert',
+      ],
+      synonyms: const <String>[
+        'turn this text into a pdf',
+        'make a pdf from photos',
+        'create a pdf document',
+        'images to one pdf',
+        'save this as a pdf',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const PdfTool(),
+    ),
+    ToolDescriptor(
       id: 'file.diskUsage',
       name: 'Disk analyser',
       description: 'Measure a folder and show which of its contents is using '
@@ -275,6 +378,55 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const DiskAnalyserTool(),
+    ),
+    ToolDescriptor(
+      id: 'file.archive',
+      name: 'Archive (zip)',
+      description: 'Zip a file or folder, and extract archives with a guard '
+          'against paths that try to escape.',
+      category: ToolCategory.file,
+      icon: Icons.folder_zip_outlined,
+      howTo: 'Choose Zip to compress a file or folder, or Extract to unpack a '
+          '.zip. The result is written beside the source unless you choose a '
+          'destination.',
+      tags: const <String>[
+        'zip', 'archive', 'unzip', 'extract', 'compress', 'folder', 'files',
+        'backup', 'package', 'bundle', 'deflate', 'tar',
+      ],
+      synonyms: const <String>[
+        'zip a folder',
+        'unzip this file',
+        'make a zip',
+        'extract an archive',
+        'compress these files',
+        'open a zip',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const ArchiveTool(),
+    ),
+    ToolDescriptor(
+      id: 'file.encrypt',
+      name: 'File encryption',
+      description: 'Lock one file with a password using AES-256-GCM, and '
+          'unlock it again.',
+      category: ToolCategory.file,
+      icon: Icons.lock_outline,
+      howTo: 'Choose a file, enter a password twice and press Encrypt. A .enc '
+          'copy is written beside the original. Enter the same password to '
+          'decrypt it.',
+      tags: const <String>[
+        'encrypt', 'decrypt', 'encryption', 'password', 'aes', 'gcm',
+        'pbkdf2', 'lock', 'unlock', 'private', 'secure', 'file', 'cipher',
+      ],
+      synonyms: const <String>[
+        'encrypt a file',
+        'password protect a file',
+        'lock a file with a password',
+        'decrypt this file',
+        'make a file private',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const FileEncryptionTool(),
     ),
     ToolDescriptor(
       id: 'file.shred',

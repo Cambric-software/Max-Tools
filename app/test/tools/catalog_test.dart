@@ -21,17 +21,23 @@ void main() {
     test('the tools the product promises are present', () {
       for (final id in <String>[
         'security.scan',
+        'security.vault',
         'money.wealth',
         'developer.toolkit',
         'file.checksum',
         'file.diskUsage',
         'file.duplicates',
         'file.shred',
+        'file.encrypt',
+        'file.archive',
         'everyday.units',
         'documents.text',
         'documents.notes',
         'documents.reading',
+        'documents.pdf',
         'media.colour',
+        'media.image',
+        'media.qr',
         'network.api',
       ]) {
         expect(catalog.contains(id), isTrue, reason: '$id is missing');
