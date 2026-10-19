@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 
 import '../apps/colour_toolkit_tool.dart';
 import '../apps/developer_toolkit_tool.dart';
+import '../apps/disk_analyser_tool.dart';
+import '../apps/duplicate_finder_tool.dart';
 import '../apps/hash_tool.dart';
 import '../apps/security_scan_tool.dart';
 import '../apps/text_toolkit_tool.dart';
@@ -199,6 +201,50 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const ColourToolkitTool(),
+    ),
+    ToolDescriptor(
+      id: 'file.diskUsage',
+      name: 'Disk analyser',
+      description: 'Measure a folder and show which of its contents is using '
+          'the space.',
+      category: ToolCategory.file,
+      icon: Icons.pie_chart_outline,
+      howTo: 'Choose a folder and press Analyse. Its immediate contents are '
+          'listed largest first, so the top line is where to look.',
+      tags: const <String>[
+        'disk', 'space', 'storage', 'size', 'folder', 'drive', 'full',
+        'cleanup', 'analyse', 'analyze', 'usage', 'big files', 'largest',
+      ],
+      synonyms: const <String>[
+        'what is taking up space',
+        'why is my drive full',
+        'which folder is biggest',
+        'analyse disk usage',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const DiskAnalyserTool(),
+    ),
+    ToolDescriptor(
+      id: 'file.duplicates',
+      name: 'Duplicate finder',
+      description: 'Find files with identical contents and show every copy of '
+          'each.',
+      category: ToolCategory.file,
+      icon: Icons.content_copy_outlined,
+      howTo: 'Choose a folder and press Find duplicates. Matching copies are '
+          'grouped. Nothing is deleted here — you remove the extras yourself.',
+      tags: const <String>[
+        'duplicate', 'duplicates', 'copies', 'same file', 'wasted space',
+        'cleanup', 'dedupe', 'tidy', 'storage', 'identical',
+      ],
+      synonyms: const <String>[
+        'find duplicate files',
+        'same file twice',
+        'how much space am i wasting',
+        'remove copies of the same file',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const DuplicateFinderTool(),
     ),
   ]);
   return registry;

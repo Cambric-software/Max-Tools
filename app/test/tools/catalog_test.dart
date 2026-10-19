@@ -24,6 +24,8 @@ void main() {
         'money.wealth',
         'developer.toolkit',
         'file.checksum',
+        'file.diskUsage',
+        'file.duplicates',
         'everyday.units',
         'documents.text',
         'media.colour',
