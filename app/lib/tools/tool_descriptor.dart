@@ -6,19 +6,25 @@
 /// knowing anything about the implementation.
 library;
 
+import 'package:flutter/widgets.dart';
+
 import 'variable_store.dart';
 
 /// Broad grouping used for browsing, filtering and palette prefixes.
 enum ToolCategory {
+  everyday('Everyday'),
+  file('Files'),
+  security('Security'),
   developer('Developer'),
+  money('Money'),
+  documents('Documents'),
+  media('Media'),
+  data('Data'),
+  network('Network'),
+  system('System'),
   animator('Animator'),
   freelancer('Freelancer'),
-  business('Business'),
-  data('Data'),
-  file('File'),
-  security('Security'),
-  network('Network'),
-  system('System');
+  business('Business');
 
   const ToolCategory(this.label);
 
@@ -131,6 +137,9 @@ class ToolDescriptor {
     this.tags = const <String>[],
     this.synonyms = const <String>[],
     this.readOnly = true,
+    this.icon,
+    this.howTo,
+    this.screen,
   });
 
   /// Dotted identifier, e.g. `data.csv.parse`. Stable across renames of
@@ -161,6 +170,22 @@ class ToolDescriptor {
   /// Whether the tool only reads state. Write tools are called out so the UI
   /// can confirm before running them and so audits can separate them.
   final bool readOnly;
+
+  /// The tool's own full screen.
+  ///
+  /// When this is set the tool is an application, not a parameter form: the
+  /// browser and the command palette open it rather than running [run]. This is
+  /// what makes one tool feel like one app.
+  final WidgetBuilder? screen;
+
+  /// Icon shown in the browser. Chosen by the tool, not the browser, so a new
+  /// tool needs no change to any screen.
+  final IconData? icon;
+
+  /// Plain-language explanation of what the tool does and how to use it,
+  /// shown at the top of its screen. Written for someone who has never seen
+  /// the tool before.
+  final String? howTo;
 
   /// Lookup a parameter by name.
   ToolParameter? parameter(String name) {

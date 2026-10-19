@@ -58,7 +58,12 @@ class _CommandPaletteDialogState extends State<CommandPaletteDialog> {
   VariableStore get _variables =>
       widget.variables ?? ToolsScope.variablesOf(context);
 
-  IntentParser get _parser => IntentParser(_registry);
+  /// The parser for this scope.
+  ///
+  /// Resolved through [ToolsScope] so an injected parser — with a vocabulary
+  /// suited to the registry in use — is honoured rather than replaced by a
+  /// fresh default one.
+  IntentParser get _parser => ToolsScope.parserOf(context);
 
   @override
   void initState() {
@@ -123,6 +128,16 @@ class _CommandPaletteDialogState extends State<CommandPaletteDialog> {
     final intent = _intent;
     final best = intent?.best;
     if (best == null) return;
+
+    // A tool with its own screen is an application, not a one-shot command:
+    // close the palette and open it.
+    final screen = best.tool.screen;
+    if (screen != null) {
+      final navigator = Navigator.of(context);
+      navigator.pop();
+      navigator.push(MaterialPageRoute<void>(builder: screen));
+      return;
+    }
 
     final args = <String, dynamic>{...intent!.arguments};
     for (final entry in _fieldControllers.entries) {
@@ -220,8 +235,8 @@ class _CommandPaletteDialogState extends State<CommandPaletteDialog> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Examples: "hash my password", "parse csv useHeaders yes", '
-            '"convert 2gb", "list files in C:/data".',
+            'Examples: "check a folder for viruses", "convert celsius to '
+            'fahrenheit", "verify a checksum", "count the words".',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           if (_history.isNotEmpty) ...<Widget>[

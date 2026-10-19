@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:max_tools/command/corrector.dart';
+import 'package:max_tools/command/intent_parser.dart';
 import 'package:max_tools/screens/palette/command_palette_screen.dart';
-import 'package:max_tools/tools/catalog/tool_catalog.dart';
 import 'package:max_tools/tools/tools_scope.dart';
 import 'package:max_tools/tools/variable_store.dart';
 
+import '../support/fixture_registry.dart';
+
+/// The palette end to end, against the fixture catalog.
+///
+/// The parser is injected explicitly so the tests describe the palette's
+/// behaviour rather than whatever vocabulary the shipped catalog happens to
+/// carry.
 void main() {
   late VariableStore variables;
 
@@ -13,12 +21,19 @@ void main() {
   });
 
   Future<void> pumpPalette(WidgetTester tester) async {
-    final registry = buildDefaultRegistry();
+    final registry = buildFixtureRegistry();
     await tester.pumpWidget(
       MaterialApp(
         home: ToolsScope(
           registry: registry,
           variables: variables,
+          parser: IntentParser(
+            registry,
+            corrector: Corrector.forRegistry(
+              registry,
+              extraWords: kFixtureExtraWords,
+            ),
+          ),
           child: const Scaffold(body: CommandPaletteDialog()),
         ),
       ),
@@ -36,7 +51,10 @@ void main() {
       await pumpPalette(tester);
       expect(find.textContaining('Type a request in plain English'),
           findsOneWidget);
-      expect(find.textContaining('hash my password'), findsOneWidget);
+      expect(
+        find.textContaining('convert celsius to fahrenheit'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('lists existing variables as chips', (tester) async {
@@ -73,7 +91,9 @@ void main() {
     testWidgets('flags an ambiguous sentence instead of claiming certainty',
         (tester) async {
       await pumpPalette(tester);
-      await type(tester, 'convert');
+      // 'md5' is a tag, not a name: the palette found something but cannot be
+      // sure the person meant it, so it asks rather than asserts.
+      await type(tester, 'md5');
       expect(find.byIcon(Icons.help_outline), findsOneWidget);
     });
 
@@ -85,7 +105,7 @@ void main() {
 
     testWidgets('asks for missing required input', (tester) async {
       await pumpPalette(tester);
-      await type(tester, 'list files');
+      await type(tester, 'file checksum');
       // 'path' has no value, so the palette must prompt rather than run.
       expect(find.widgetWithText(TextField, 'path'), findsOneWidget);
     });
@@ -104,12 +124,7 @@ void main() {
     testWidgets('shows a failure without crashing', (tester) async {
       await pumpPalette(tester);
       await type(tester, 'checksum file in /definitely/not/here.txt');
-      // The tool touches the real filesystem, which does not complete under
-      // the test binding's fake clock, so the run is awaited for real.
-      await tester.runAsync(() async {
-        await tester.tap(find.widgetWithText(FilledButton, 'Run'));
-        await Future<void>.delayed(const Duration(milliseconds: 200));
-      });
+      await tester.tap(find.widgetWithText(FilledButton, 'Run'));
       await tester.pumpAndSettle();
       expect(find.text('Failed'), findsOneWidget);
       expect(find.textContaining('File not found'), findsOneWidget);

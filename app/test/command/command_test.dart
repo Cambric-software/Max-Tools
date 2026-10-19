@@ -1,17 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:max_tools/command/corrector.dart';
 import 'package:max_tools/command/intent_parser.dart';
 import 'package:max_tools/command/text_distance.dart';
-import 'package:max_tools/tools/catalog/tool_catalog.dart';
 import 'package:max_tools/tools/tool_registry.dart';
 import 'package:max_tools/tools/variable_store.dart';
+
+import '../support/fixture_registry.dart';
 
 void main() {
   late ToolRegistry registry;
   late IntentParser parser;
 
   setUp(() {
-    registry = buildDefaultRegistry();
-    parser = IntentParser(registry);
+    registry = buildFixtureRegistry();
+    parser = IntentParser(
+      registry,
+      corrector: Corrector.forRegistry(
+        registry,
+        extraWords: kFixtureExtraWords,
+      ),
+    );
   });
 
   group('edit distance', () {
@@ -95,7 +103,7 @@ void main() {
     });
 
     test('suggestions are ordered and bounded', () {
-      final suggestions = parser.corrector.suggestions('chec');
+      final suggestions = parser.corrector.suggestions('checksumm');
       expect(suggestions, isNotEmpty);
       expect(suggestions.length, lessThanOrEqualTo(5));
     });

@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:max_tools/screens/tools/tool_runner_screen.dart';
 import 'package:max_tools/screens/tools/tools_screen.dart';
-import 'package:max_tools/tools/catalog/tool_catalog.dart';
 import 'package:max_tools/tools/tool_descriptor.dart';
 import 'package:max_tools/tools/tool_registry.dart';
 import 'package:max_tools/tools/tools_scope.dart';
 
+import '../support/fixture_registry.dart';
+
+/// Browser and runner behaviour, exercised against the fixture catalog.
 void main() {
   late ToolRegistry registry;
 
   setUp(() {
-    registry = buildDefaultRegistry();
+    registry = buildFixtureRegistry();
   });
 
   Future<void> pumpTools(WidgetTester tester) async {
@@ -59,11 +61,7 @@ void main() {
     testWidgets('lists every registered tool', (tester) async {
       await pumpTools(tester);
       expect(find.text('Tools (${registry.length})'), findsOneWidget);
-      // The list is virtualised, so only the visible window renders; assert the
-      // first entries appear and that the count reflects the whole registry.
-      final ids = registry.all().map((t) => t.id).toList();
       expect(find.text(registry.all().first.name), findsOneWidget);
-      expect(find.text('Tools (${ids.length})'), findsOneWidget);
     });
 
     testWidgets('search reaches tools below the fold', (tester) async {
@@ -101,6 +99,26 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Hash Text'), findsOneWidget);
       expect(find.text('Parse CSV'), findsNothing);
+    });
+
+    testWidgets('a tool with its own screen opens that screen', (tester) async {
+      registry.register(
+        ToolDescriptor(
+          id: 'test.screenTool',
+          name: 'Screen Tool',
+          description: 'has its own screen',
+          category: ToolCategory.everyday,
+          run: (_) async => const ToolResult.success('unused'),
+          screen: (_) => const Scaffold(body: Text('Screened')),
+        ),
+      );
+      await pumpTools(tester);
+      await tester.enterText(find.byType(TextField).first, 'Screen Tool');
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ListTile, 'Screen Tool'));
+      await tester.pumpAndSettle();
+      expect(find.text('Screened'), findsOneWidget);
+      expect(find.byType(ToolRunnerScreen), findsNothing);
     });
   });
 

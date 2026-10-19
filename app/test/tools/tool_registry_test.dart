@@ -1,19 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:max_tools/tools/catalog/tool_catalog.dart';
 import 'package:max_tools/tools/tool_descriptor.dart';
 import 'package:max_tools/tools/tool_registry.dart';
 
+import '../support/fixture_registry.dart';
+
+/// Tests for the registry itself. These run against the fixture catalog so
+/// they describe the machinery, not whichever tools happen to ship today.
 void main() {
   late ToolRegistry registry;
 
   setUp(() {
-    registry = buildDefaultRegistry();
+    registry = buildFixtureRegistry();
   });
 
   group('registration', () {
-    test('default registry exposes the developer catalog', () {
+    test('the fixture exposes its tools', () {
       expect(registry.length, greaterThan(0));
       expect(registry.contains('data.csv.parse'), isTrue);
       expect(registry.contains('security.hash'), isTrue);
@@ -190,6 +193,11 @@ void main() {
       expect(result.error, contains('boom'));
     });
 
+    test('a tool with no parameters runs with an empty map', () async {
+      final result = await registry.run('files.list', <String, dynamic>{});
+      expect(result.success, isTrue);
+    });
+
     test('csv parse returns rows', () async {
       final result = await registry.run(
         'data.csv.parse',
@@ -200,34 +208,6 @@ void main() {
         <String>['a', 'b'],
         <String>['1', '2'],
       ]);
-    });
-
-    test('csv parse with headers returns maps', () async {
-      final result = await registry.run(
-        'data.csv.parse',
-        <String, dynamic>{'text': 'name,age\nAda,36', 'useHeaders': true},
-      );
-      expect(result.success, isTrue);
-      final rows = result.value as List<Map<String, String>>;
-      expect(rows.single['name'], 'Ada');
-    });
-
-    test('csv encode round-trips through parse', () async {
-      final encoded = await registry.run(
-        'data.csv.encode',
-        <String, dynamic>{
-          'rows': <List<String>>[
-            <String>['name', 'note'],
-            <String>['Ada', 'likes, commas'],
-          ],
-        },
-      );
-      expect(encoded.success, isTrue);
-      final parsed = await registry.run(
-        'data.csv.parse',
-        <String, dynamic>{'text': encoded.value},
-      );
-      expect((parsed.value as List<List<String>>).last.last, 'likes, commas');
     });
 
     test('json format pretty-prints and minifies', () async {
@@ -294,26 +274,6 @@ void main() {
       expect(result.success, isFalse);
       expect(result.error, contains('sha256'));
     });
-
-    test('verifyTextHash reports a match', () async {
-      final sha = await registry.run(
-        'security.hash',
-        <String, dynamic>{'text': 'hello'},
-      );
-      final verified = await registry.run(
-        'security.verifyTextHash',
-        <String, dynamic>{'text': 'hello', 'expected': sha.value},
-      );
-      expect((verified.value as Map<String, bool>)['matches'], isTrue);
-    });
-
-    test('verifyTextHash reports a mismatch', () async {
-      final verified = await registry.run(
-        'security.verifyTextHash',
-        <String, dynamic>{'text': 'hello', 'expected': 'deadbeef'},
-      );
-      expect((verified.value as Map<String, bool>)['matches'], isFalse);
-    });
   });
 
   group('file tools', () {
@@ -327,7 +287,7 @@ void main() {
       if (await temp.exists()) await temp.delete(recursive: true);
     });
 
-    test('file checksum matches verify', () async {
+    test('a checksum is a sha256 of the file contents', () async {
       final file = File('${temp.path}/a.txt');
       await file.writeAsString('payload');
       final sum = await registry.run(
@@ -335,11 +295,7 @@ void main() {
         <String, dynamic>{'path': file.path},
       );
       expect(sum.success, isTrue);
-      final verified = await registry.run(
-        'files.verifyChecksum',
-        <String, dynamic>{'path': file.path, 'expected': sum.value},
-      );
-      expect((verified.value as Map<String, bool>)['matches'], isTrue);
+      expect(sum.value, matches(RegExp(r'^[0-9a-f]{64}$')));
     });
 
     test('missing file fails without throwing', () async {

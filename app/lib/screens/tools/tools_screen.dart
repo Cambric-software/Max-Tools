@@ -110,19 +110,15 @@ class _ToolsScreenState extends State<ToolsScreen> {
                     itemBuilder: (context, index) {
                       final tool = tools[index];
                       return ListTile(
+                        leading: Icon(tool.icon ?? Icons.widgets_outlined),
                         title: Text(tool.name),
                         subtitle: Text(tool.description),
-                        trailing: tool.readOnly
-                            ? null
-                            : const Icon(Icons.edit_outlined, size: 18),
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => ToolRunnerScreen(
-                              tool: tool,
-                              registry: widget.registry,
-                            ),
-                          ),
-                        ),
+                        trailing: tool.screen != null
+                            ? const Icon(Icons.chevron_right)
+                            : (tool.readOnly
+                                ? null
+                                : const Icon(Icons.edit_outlined, size: 18)),
+                        onTap: () => _open(context, tool),
                       );
                     },
                   ),
@@ -132,8 +128,22 @@ class _ToolsScreenState extends State<ToolsScreen> {
     );
   }
 
-  Widget _chip(
-    BuildContext context, {
+  /// Open a tool. A tool with its own screen opens that; anything else gets
+  /// the generated argument form.
+  void _open(BuildContext context, ToolDescriptor tool) {
+    final screen = tool.screen;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: screen ??
+            (_) => ToolRunnerScreen(
+                  tool: tool,
+                  registry: widget.registry,
+                ),
+      ),
+    );
+  }
+
+  Widget _chip(    BuildContext context, {
     required String label,
     required bool selected,
     required VoidCallback onTap,
