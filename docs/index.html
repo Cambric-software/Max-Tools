@@ -119,9 +119,13 @@
       Local-first and offline-capable.
     </p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/Cambric-software/Max-Tools/releases/latest" id="latest">Download the latest release</a>
+      <!-- Never points at a GitHub page. The script at the foot of the file
+           rewrites this to a direct release asset for the detected platform, so
+           the browser downloads it while the reader stays here. With scripting
+           off it degrades to scrolling down to the platform cards, which is
+           still correct and still does not leave the site. -->
+      <a class="btn primary" href="#platforms" id="latest">Choose a platform</a>
       <a class="btn" href="https://github.com/Cambric-software/Max-Tools">Source on GitHub</a>
-      <a class="btn" href="#platforms">Choose a platform</a>
     </div>
     <p class="checksum" style="margin-top:16px">
       Every download ships with a <code>.sha256</code> file. Verify it before installing.
@@ -238,19 +242,54 @@
 </footer>
 
 <script>
-  // Show the newest published version next to the main download button.
+  // The main button downloads from the release assets directly, so the browser
+  // starts the download without navigating away from this page.
+  //
+  // GitHub serves release assets with Content-Disposition: attachment, so the
+  // browser treats the response as a download and the page stays put. Pointing
+  // at github.com/.../releases/latest instead - an HTML page - is what used to
+  // carry the reader off to GitHub.
+  //
+  // The platform is detected so the button downloads the right artifact by
+  // default. The cards further down remain the explicit choice.
   (function () {
-    var api = 'https://api.github.com/repos/Cambric-software/Max-Tools/releases/latest';
+    var assets = 'https://github.com/Cambric-software/Max-Tools/releases/latest/download/';
+    var byPlatform = {
+      windows: { file: 'MaxTools-Setup.exe', label: 'Download for Windows' },
+      linux:   { file: 'max-tools.deb',      label: 'Download for Linux' },
+      android: { file: 'android.apk',        label: 'Download for Android' }
+    };
+
     var el = document.getElementById('latest');
     if (!el) return;
-    fetch(api, { headers: { Accept: 'application/vnd.github+json' } })
+
+    var ua = navigator.userAgent || '';
+    var platform = '';
+    if (/Android/i.test(ua)) platform = 'android';
+    else if (/Windows/i.test(ua)) platform = 'windows';
+    else if (/Linux|X11|CrOS/i.test(ua)) platform = 'linux';
+
+    var chosen = byPlatform[platform];
+    // An unrecognised platform keeps the in-page link rather than guessing at a
+    // build that may not exist for it, such as macOS, which has no artifact.
+    if (chosen) {
+      el.href = assets + chosen.file;
+      el.textContent = chosen.label;
+    }
+
+    // Add the published version to the label once the API answers. If it does
+    // not, the platform label alone is still accurate, so nothing is invented.
+    fetch('https://api.github.com/repos/Cambric-software/Max-Tools/releases/latest', {
+      headers: { Accept: 'application/vnd.github+json' }
+    })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         if (data && data.tag_name) {
-          el.textContent = 'Download ' + data.tag_name;
+          el.textContent = (chosen ? chosen.label : 'Choose a platform') +
+            ' \u00b7 ' + data.tag_name;
         }
       })
-      .catch(function () { /* offline: keep the static label */ });
+      .catch(function () { /* offline: keep the label as it stands */ });
   })();
 </script>
 

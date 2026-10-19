@@ -6,6 +6,7 @@ import 'core/ecosystem/cambric_ecosystem_service.dart';
 import 'core/ecosystem/product_registry_service.dart';
 import 'core/lifecycle/app_lifecycle_service.dart';
 import 'core/config/cambric_config.dart';
+import 'core/settings/app_settings.dart';
 import 'core/storage/cambric_paths.dart';
 import 'core/updates/install_layout.dart';
 import 'screens/home/home_screen.dart';
@@ -51,6 +52,10 @@ Future<void> main() async {
   final lifecycle = AppLifecycleService();
   await lifecycle.initialize();
 
+  // Read the person's stored preferences before the first frame, so the app
+  // opens in the theme they chose instead of flashing the default first.
+  await AppSettings.instance.load();
+
   // Initialize the local Cambric ecosystem service.
   final ecosystem = CambricEcosystemService();
   await ecosystem.ensureIdentity();
@@ -76,7 +81,7 @@ Future<void> main() async {
   final products = await registry.products();
 
   runApp(
-    CambricTemplateApp(
+    MaxToolsApp(
       config: config,
       existingProducts: products,
       variables: variables,
@@ -84,12 +89,17 @@ Future<void> main() async {
   );
 }
 
-class CambricTemplateApp extends StatelessWidget {
+/// The application root.
+///
+/// Named for the product rather than for the template it was generated from,
+/// so the widget tree, the window title and the about screen all describe the
+/// same thing.
+class MaxToolsApp extends StatelessWidget {
   final CambricConfig config;
   final List<Map<String, dynamic>> existingProducts;
   final VariableStore variables;
 
-  const CambricTemplateApp({
+  const MaxToolsApp({
     super.key,
     required this.config,
     required this.existingProducts,
@@ -108,23 +118,28 @@ class CambricTemplateApp extends StatelessWidget {
     return ToolsScope(
       registry: buildDefaultRegistry(),
       variables: variables,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: config.productName,
-        theme: AppTheme.light(),
-        darkTheme: AppTheme.dark(),
-        themeMode: ThemeMode.system,
-        // The product surface is the home screen. The template's single
-        // "Open Cambric Setup" button is now a card inside it, so the app
-        // opens on the tools rather than on a wizard.
-        home: CambricAppShell(
-          productName: config.productName,
-          version: config.version,
-          child: HomeScreen(
-            config: config,
-            existingProducts: existingProducts,
-          ),
-        ),
+      child: ValueListenableBuilder<ThemeMode>(
+        valueListenable: AppSettings.instance.themeMode,
+        builder: (BuildContext context, ThemeMode mode, Widget? _) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: config.productName,
+            theme: AppTheme.light(),
+            darkTheme: AppTheme.dark(),
+            themeMode: mode,
+            // The product surface is the home screen. There is no wizard gate:
+            // the app is usable immediately, and everything the setup wizard
+            // collected is shown on the Cambric screen.
+            home: CambricAppShell(
+              productName: config.productName,
+              version: config.version,
+              child: HomeScreen(
+                config: config,
+                existingProducts: existingProducts,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
