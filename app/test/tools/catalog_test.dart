@@ -26,6 +26,7 @@ void main() {
         'file.checksum',
         'file.diskUsage',
         'file.duplicates',
+        'file.shred',
         'everyday.units',
         'documents.text',
         'documents.notes',

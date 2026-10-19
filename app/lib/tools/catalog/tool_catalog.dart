@@ -16,6 +16,7 @@ import '../apps/colour_toolkit_tool.dart';
 import '../apps/developer_toolkit_tool.dart';
 import '../apps/disk_analyser_tool.dart';
 import '../apps/duplicate_finder_tool.dart';
+import '../apps/file_shredder_tool.dart';
 import '../apps/hash_tool.dart';
 import '../apps/notes_tool.dart';
 import '../apps/reading_aid_tool.dart';
@@ -274,6 +275,29 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const DiskAnalyserTool(),
+    ),
+    ToolDescriptor(
+      id: 'file.shred',
+      name: 'File shredder',
+      description: 'Overwrite one file before deleting it, with a typed '
+          'confirmation and an honest account of the limits.',
+      category: ToolCategory.file,
+      icon: Icons.delete_forever,
+      howTo: 'Choose a file, pick how many overwrite passes, press Shred the '
+          'file, then type DELETE. It cannot be undone.',
+      tags: const <String>[
+        'shred', 'shredder', 'delete', 'erase', 'wipe', 'secure delete',
+        'overwrite', 'privacy', 'file', 'remove', 'destroy', 'sensitive',
+      ],
+      synonyms: const <String>[
+        'delete a file permanently',
+        'erase a file for good',
+        'shred this file',
+        'wipe a sensitive file',
+        'securely delete',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const FileShredderTool(),
     ),
     ToolDescriptor(
       id: 'file.duplicates',
