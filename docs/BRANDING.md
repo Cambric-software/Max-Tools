@@ -8,9 +8,9 @@ not hand-edit a platform-specific icon.
 | File | What it is |
 |---|---|
 | `cambric-logo.png` | The official Cambric mark (680x680, transparent). Also at the repository root. |
-| `../../app/windows/runner/resources/app_icon.ico` | Max Tools app icon, 7 sizes (16–256). Feeds **both** the `.exe` icon and the window/tab icon. |
-| `../../docs/favicon.ico`, `icon-32/192/512.png` | Download-page favicon and social preview. |
-| `../../app/android/app/src/main/res/mipmap-*/ic_launcher.png` | Android launcher icons. |
+| `../app/windows/runner/resources/app_icon.ico` | Max Tools app icon, 7 sizes (16–256). Feeds **both** the `.exe` icon and the window/tab icon. |
+| `favicon.ico`, `icon-32.png`, `icon-192.png`, `icon-512.png` | Download-page favicon and social preview. |
+| `../app/android/app/src/main/res/mipmap-*/ic_launcher.png` | Android launcher icons. |
 
 ## Two distinct marks
 

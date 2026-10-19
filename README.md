@@ -379,17 +379,8 @@ Feature flags start conservative and are enabled deliberately:
 
 ## Roadmap
 
-| Phase | Scope | Status |
-|---|---|---|
-| 0 | Rebrand to Max Tools, proprietary licence, dead-code cleanup | Done |
-| 1 | Tool registry, argument validation, search | Done |
-| 2 | Tool browser UI and generated runner screens | Done |
-| 3 | Variable system and the command-palette engine | Done |
-| 4 | Animator tools | Done |
-| 5 | Freelancer and business/money tools | Done |
-| 6 | Update system wired to GitHub Releases | Done |
-| 7 | Download page and GitHub Pages deployment | Done (needs Pages enabled) |
-| 8 | Remaining duplicate-service consolidation | Not started |
+The authoritative, ordered plan for this product and its sibling **Digital
+Saver** lives in [docs/ROADMAP.md](docs/ROADMAP.md). Work it top to bottom.
 
 **Still open before a public release**
 
@@ -403,26 +394,9 @@ Feature flags start conservative and are enabled deliberately:
 
 ## Troubleshooting
 
-**`flutter analyze` fails after a dependency change**
-Run `flutter pub get`, then `flutter pub outdated`. The project pins
-versions in `pubspec.lock`.
-
-**`flutter test` cannot delete a build directory**
-A cloud-sync folder (OneDrive, Dropbox) can lock files briefly. Close any
-running build, then delete `app/build/` and re-run. This is a filesystem lock,
-not a code fault.
-
-**Toolchain version mismatch**
-Requires Flutter 3.47+ / Dart 3.13+. If `flutter analyze` reports
-`experiment_not_enabled` for a language feature, your SDK is too old —
-upgrade Flutter rather than working around it in the source.
-
-**Update check reports "No release repository is configured"**
-The repository lives in `release.repository` in `cambric_config.json`. It is
-set to `Cambric-software/Max-Tools`. Updates also require `updates.enabled`,
-so a build with either missing deliberately downloads nothing.
-
-See [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for more.
+See [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md). It covers dependency
+changes, locked build directories on cloud-synced drives, toolchain version
+mismatches, and a missing release repository.
 
 ---
 
