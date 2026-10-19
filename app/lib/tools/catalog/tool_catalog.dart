@@ -11,6 +11,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../apps/api_tester_tool.dart';
 import '../apps/colour_toolkit_tool.dart';
 import '../apps/developer_toolkit_tool.dart';
 import '../apps/disk_analyser_tool.dart';
@@ -245,6 +246,31 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const DuplicateFinderTool(),
+    ),
+    ToolDescriptor(
+      id: 'network.api',
+      name: 'HTTP / API tester',
+      description: 'Send one HTTP request and see the status, headers and body '
+          'the server actually returned.',
+      category: ToolCategory.network,
+      icon: Icons.api,
+      howTo: 'Choose a method, type the full address, add headers one per line '
+          'and press Send. The response is shown unedited, with the time it '
+          'took.',
+      tags: const <String>[
+        'http', 'api', 'request', 'rest', 'json', 'endpoint', 'get', 'post',
+        'put', 'patch', 'delete', 'headers', 'status code', 'curl', 'webhook',
+        'server', 'response',
+      ],
+      synonyms: const <String>[
+        'test an api endpoint',
+        'send a get request',
+        'send a post request',
+        'check what a server returns',
+        'debug an http request',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const ApiTesterTool(),
     ),
   ]);
   return registry;

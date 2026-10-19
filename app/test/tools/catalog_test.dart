@@ -29,6 +29,7 @@ void main() {
         'everyday.units',
         'documents.text',
         'media.colour',
+        'network.api',
       ]) {
         expect(catalog.contains(id), isTrue, reason: '$id is missing');
       }
@@ -83,6 +84,7 @@ void main() {
           ToolCategory.everyday,
           ToolCategory.documents,
           ToolCategory.media,
+          ToolCategory.network,
         ]),
       );
       expect(
