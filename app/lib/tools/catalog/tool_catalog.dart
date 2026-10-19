@@ -17,6 +17,8 @@ import '../apps/developer_toolkit_tool.dart';
 import '../apps/disk_analyser_tool.dart';
 import '../apps/duplicate_finder_tool.dart';
 import '../apps/hash_tool.dart';
+import '../apps/notes_tool.dart';
+import '../apps/reading_aid_tool.dart';
 import '../apps/security_scan_tool.dart';
 import '../apps/text_toolkit_tool.dart';
 import '../apps/unit_converter_tool.dart';
@@ -179,6 +181,54 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const TextToolkitTool(),
+    ),
+    ToolDescriptor(
+      id: 'documents.notes',
+      name: 'Notes',
+      description: 'Write, search, pin and edit notes that stay on this '
+          'device.',
+      category: ToolCategory.documents,
+      icon: Icons.sticky_note_2_outlined,
+      howTo: 'Press Write a note. The first line becomes the title if you '
+          'leave the title empty. Pin the notes you need often.',
+      tags: const <String>[
+        'note', 'notes', 'notepad', 'memo', 'write', 'writing', 'list',
+        'todo', 'shopping', 'reminder', 'search', 'pin', 'journal', 'draft',
+      ],
+      synonyms: const <String>[
+        'write a note',
+        'keep a note',
+        'notepad',
+        'save a memo',
+        'make a shopping list',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const NotesTool(),
+    ),
+    ToolDescriptor(
+      id: 'documents.reading',
+      name: 'Accessibility & reading',
+      description: 'Measure how hard text is to read and reshape the page for '
+          'comfortable reading.',
+      category: ToolCategory.documents,
+      icon: Icons.accessibility_new,
+      howTo: 'Paste text to see its reading ease and grade, then adjust size, '
+          'spacing and line length until the preview is comfortable.',
+      tags: const <String>[
+        'accessibility', 'reading', 'readability', 'flesch', 'dyslexia',
+        'font size', 'line spacing', 'contrast', 'plain english', 'grade',
+        'reading time', 'legibility', 'large text', 'easy read',
+      ],
+      synonyms: const <String>[
+        'is this easy to read',
+        'how readable is this',
+        'make text easier to read',
+        'reading level',
+        'accessibility check',
+        'dyslexia friendly text',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const ReadingAidTool(),
     ),
     ToolDescriptor(
       id: 'media.colour',

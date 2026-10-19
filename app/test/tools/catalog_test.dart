@@ -28,6 +28,8 @@ void main() {
         'file.duplicates',
         'everyday.units',
         'documents.text',
+        'documents.notes',
+        'documents.reading',
         'media.colour',
         'network.api',
       ]) {
