@@ -423,6 +423,7 @@ for a vulnerability.
 Proprietary. Copyright (c) 2026 Cambric Software. All rights reserved.
 
 This software is **not** open source and carries no open-source licence
-grant. No permission is granted to copy, modify, publish, sublicense,
-redistribute, or create derivative works. Client deliveries are covered by a
-separate written engagement agreement. See [LICENSE](LICENSE).
+grant. Anyone may install and use it on devices they control for personal,
+educational or internal business purposes, free of charge. You may not
+redistribute it, modify it, or create derivative works. Client deliveries are
+covered by a separate written engagement agreement. See [LICENSE](LICENSE).
