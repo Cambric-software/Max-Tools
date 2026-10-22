@@ -27,6 +27,7 @@ import '../apps/pdf_tool.dart';
 import '../apps/qr_tool.dart';
 import '../apps/reading_aid_tool.dart';
 import '../apps/security_scan_tool.dart';
+import '../apps/system_actions_tool.dart';
 import '../apps/text_toolkit_tool.dart';
 import '../apps/unit_converter_tool.dart';
 import '../apps/wealth_tool.dart';
@@ -497,6 +498,30 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const ApiTesterTool(),
+    ),
+    ToolDescriptor(
+      id: 'system.actions',
+      name: 'System actions',
+      description: 'List, copy, move, rename and delete files and folders on '
+          'this machine, with confirmation for destructive steps.',
+      category: ToolCategory.system,
+      icon: Icons.terminal,
+      howTo: 'Choose an action, enter the path (and a destination when copying, '
+          'moving or renaming), then run it. Deletes ask for confirmation.',
+      tags: const <String>[
+        'file', 'folder', 'directory', 'delete', 'remove', 'copy', 'move',
+        'rename', 'list', 'system', 'action', 'path',
+      ],
+      synonyms: const <String>[
+        'delete a file',
+        'delete a folder',
+        'list files in a folder',
+        'copy a file',
+        'move a file',
+        'rename a file',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const SystemActionsTool(),
     ),
   ]);
   return registry;

@@ -52,52 +52,38 @@ telemetry. Your data stays on your machine.
 
 ---
 
-## The four pillars
+## The tool set
 
-Max Tools currently ships **106 tools**: 52 developer-side tools and 54 for
-animators, freelancers and business work.
+Max Tools currently ships **19 real tools**, each with its own screen. The older
+106-descriptor catalog was retired because most of it reshuffled text through one
+generated form.
 
-### 1. Developer tools (52)
-
-| Area | Tools |
+| ID | Tool |
 |---|---|
-| Data | CSV parse/encode, JSON format/inspect, XML extract/escape |
-| Text | base64, URL encode/decode, case and identifier conversion, slug, pad, word count, dedupe, sort, filter, replace, regex match/replace/test, markdown→CSV, line diff, indent, join, split, character codes, CSV escaping |
-| Files | path join/basename/dirname/extension, exists, metadata, list, human size, checksum, verify checksum, create folder |
-| Security | hash (SHA-256/MD5/HMAC), verify text hash, obfuscate/deobfuscate, key generation |
-| Network | URL validate, query parameters, add parameters |
+| security.scan | Antivirus & scan |
+| security.vault | Password vault |
+| money.wealth | Wealth |
+| developer.toolkit | Developer toolkit |
+| file.checksum | Checksum |
+| everyday.units | Unit converter |
+| documents.text | Text toolkit |
+| documents.notes | Notes |
+| documents.reading | Reading aid |
+| media.colour | Colour toolkit |
+| media.image | Image |
+| media.qr | QR |
+| documents.pdf | PDF |
+| file.diskUsage | Disk analyser |
+| file.archive | Archive |
+| file.encrypt | File encryption |
+| file.shred | File shredder |
+| file.duplicates | Duplicate finder |
+| network.api | API tester |
+| system.actions | System actions |
 
-### 2. Animator tools (16)
-
-Frames↔duration, timecode↔frames with correct drop-frame handling for 29.97
-and 59.94, frame-rate comparison, render-time estimation with machine scaling,
-video size from bitrate, bitrate for a target file size, resolution facts and
-aspect-ratio simplification, slow-motion frame maths, audio sample-to-frame
-alignment, frames per second, delivery-spec checking, frame step/stride, stops
-to exposure, and a reference list of standard rates.
-
-### 3. Freelancer tools (17)
-
-Hourly-to-project pricing with markup, day-rate to hourly, quotes with tax,
-invoice totals net of deposits, milestone plans, effective hourly rate,
-billable split and utilisation, retainer consumption and overage, late-payment
-interest, deposit-to-start, "can I take this job?", payment terms and ageing,
-rate cards, capacity, utilisation gap, minimum viable project price and quote
-splitting.
-
-### 4. Business tools (21)
-
-Project profit including labour, markup↔margin, price from target margin, tax
-set-aside, break-even units, budget burn rate, cash-flow projection, currency
-conversion, cost per client, scope-change pricing, three-tier pricing, margin
-after tax, revenue target, monthly run rate, payback period, ROI, profit
-scenarios, discount impact, expense ratio, cost escalation and withholding.
-
-Every money tool states its assumptions rather than hiding them: tax applies
-after discount, margin is measured on the selling price while markup is on
-cost, and a loss never accrues tax.
-
----
+Money tools state their assumptions rather than hiding them: tax applies after
+discount, margin is measured on the selling price while markup is on cost, and a
+loss never accrues tax.
 
 ## The command palette
 
