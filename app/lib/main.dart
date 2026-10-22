@@ -10,7 +10,7 @@ import 'core/settings/app_settings.dart';
 import 'core/storage/cambric_paths.dart';
 import 'core/updates/install_layout.dart';
 import 'screens/home/home_screen.dart';
-import 'theme/app_theme.dart';
+import 'package:cambric_design/cambric_design.dart';
 import 'tools/catalog/tool_catalog.dart';
 import 'tools/tools_scope.dart';
 import 'tools/variable_store.dart';
@@ -124,8 +124,8 @@ class MaxToolsApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: config.productName,
-            theme: AppTheme.light(),
-            darkTheme: AppTheme.dark(),
+            theme: AppTheme.light,
+            darkTheme: AppTheme.dark,
             themeMode: mode,
             // The product surface is the home screen. There is no wizard gate:
             // the app is usable immediately, and everything the setup wizard
