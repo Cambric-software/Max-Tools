@@ -28,6 +28,7 @@ import '../apps/qr_tool.dart';
 import '../apps/reading_aid_tool.dart';
 import '../apps/security_scan_tool.dart';
 import '../apps/system_actions_tool.dart';
+import '../apps/system_command_tool.dart';
 import '../apps/text_toolkit_tool.dart';
 import '../apps/unit_converter_tool.dart';
 import '../apps/wealth_tool.dart';
@@ -522,6 +523,29 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const SystemActionsTool(),
+    ),
+    ToolDescriptor(
+      id: 'system.command',
+      name: 'System command',
+      description: 'Type a file or folder action in plain English and run it, '
+          'with a preview and confirmation.',
+      category: ToolCategory.system,
+      icon: Icons.terminal,
+      howTo: 'Type what you want, e.g. "delete a file called 1 in folder 2", '
+          'then parse and run. Destructive actions ask for confirmation.',
+      tags: const <String>[
+        'command', 'natural language', 'file', 'folder', 'delete', 'move',
+        'copy', 'rename', 'list', 'system',
+      ],
+      synonyms: const <String>[
+        'delete a file called 1 in folder 2',
+        'list files in a folder',
+        'move a file',
+        'copy a file',
+        'rename a file',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const SystemCommandTool(),
     ),
   ]);
   return registry;
