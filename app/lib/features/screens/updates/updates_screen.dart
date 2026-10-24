@@ -10,9 +10,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../core/config/cambric_config.dart';
-import '../../core/updates/install_layout.dart';
-import '../../core/updates/update_center.dart';
+import '../../../core/config/cambric_config.dart';
+import '../../../core/updates/install_layout.dart';
+import '../../../core/updates/update_center.dart';
 
 /// Shows the update state and the actions available.
 class UpdatesScreen extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/cache/cache_cleanup_service.dart';
+import '../../../core/cache/cache_cleanup_service.dart';
 
 class CacheScreen extends StatefulWidget {
   const CacheScreen({super.key});

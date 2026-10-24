@@ -10,7 +10,7 @@
 /// rather than a confident wrong guess.
 library;
 
-import '../tools/tool_registry.dart';
+import '../../features/tools/tool_registry.dart';
 import 'text_distance.dart';
 
 /// One offered correction.

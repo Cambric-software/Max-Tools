@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../core/config/cambric_config.dart';
-import '../../core/ecosystem/product_registry_service.dart';
-import '../../core/storage/cambric_paths.dart';
+import '../../../core/config/cambric_config.dart';
+import '../../../core/ecosystem/product_registry_service.dart';
+import '../../../core/storage/cambric_paths.dart';
 import '../updates/updates_screen.dart';
 
 /// The Cambric screen: what this installation is, what else from Cambric is on

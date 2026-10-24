@@ -5,9 +5,9 @@
 /// ambiguous it says so and offers alternatives instead of guessing.
 library;
 
-import '../tools/tool_descriptor.dart';
-import '../tools/tool_registry.dart';
-import '../tools/variable_store.dart';
+import '../../features/tools/tool_descriptor.dart';
+import '../../features/tools/tool_registry.dart';
+import '../../features/tools/variable_store.dart';
 import 'corrector.dart';
 import 'text_distance.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../core/config/cambric_config.dart';
-import '../../core/settings/app_settings.dart';
+import '../../../core/config/cambric_config.dart';
+import '../../../core/settings/app_settings.dart';
 import '../cache/cache_screen.dart';
 import '../cambric/cambric_screen.dart';
 import '../diagnostics/diagnostics_screen.dart';

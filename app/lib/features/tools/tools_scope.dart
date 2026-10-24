@@ -6,7 +6,7 @@ library;
 
 import 'package:flutter/widgets.dart';
 
-import '../command/intent_parser.dart';
+import '../../../core/command/intent_parser.dart';
 import 'tool_registry.dart';
 import 'variable_store.dart';
 

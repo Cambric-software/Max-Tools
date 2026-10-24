@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../core/network/connectivity_service.dart';
+import '../../../core/network/connectivity_service.dart';
 
 /// A banner that appears at the top of the screen when the device goes offline.
 ///

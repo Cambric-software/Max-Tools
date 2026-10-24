@@ -9,7 +9,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../command/intent_parser.dart';
+import '../../../core/command/intent_parser.dart';
 import '../../tools/tool_descriptor.dart';
 import '../../tools/tool_registry.dart';
 import '../../tools/tools_scope.dart';

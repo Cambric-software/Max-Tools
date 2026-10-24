@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/config/cambric_config.dart';
+import '../../../core/config/cambric_config.dart';
 import '../../widgets/responsive_layout.dart';
 import '../cache/cache_screen.dart';
 import '../cambric/cambric_screen.dart';

@@ -9,11 +9,11 @@ import 'core/config/cambric_config.dart';
 import 'core/settings/app_settings.dart';
 import 'core/storage/cambric_paths.dart';
 import 'core/updates/install_layout.dart';
-import 'screens/home/home_screen.dart';
+import 'features/screens/home/home_screen.dart';
 import 'package:cambric_design/cambric_design.dart';
-import 'tools/catalog/tool_catalog.dart';
-import 'tools/tools_scope.dart';
-import 'tools/variable_store.dart';
+import 'features/tools/catalog/tool_catalog.dart';
+import 'features/tools/tools_scope.dart';
+import 'features/tools/variable_store.dart';
 import 'core/cambric_app_shell.dart';
 
 Future<void> main() async {
