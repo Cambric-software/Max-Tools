@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:max_tools/tools/variable_store.dart';
+import 'package:max_tools/features/tools/variable_store.dart';
 
 void main() {
   late Directory temp;

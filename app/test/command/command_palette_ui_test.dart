@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:max_tools/command/corrector.dart';
-import 'package:max_tools/command/intent_parser.dart';
-import 'package:max_tools/screens/palette/command_palette_screen.dart';
-import 'package:max_tools/tools/tools_scope.dart';
-import 'package:max_tools/tools/variable_store.dart';
+import 'package:max_tools/core/command/corrector.dart';
+import 'package:max_tools/core/command/intent_parser.dart';
+import 'package:max_tools/features/screens/palette/command_palette_screen.dart';
+import 'package:max_tools/features/tools/tools_scope.dart';
+import 'package:max_tools/features/tools/variable_store.dart';
 
 import '../support/fixture_registry.dart';
 

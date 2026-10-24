@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:max_tools/command/corrector.dart';
-import 'package:max_tools/command/intent_parser.dart';
-import 'package:max_tools/command/text_distance.dart';
-import 'package:max_tools/tools/tool_registry.dart';
-import 'package:max_tools/tools/variable_store.dart';
+import 'package:max_tools/core/command/corrector.dart';
+import 'package:max_tools/core/command/intent_parser.dart';
+import 'package:max_tools/core/command/text_distance.dart';
+import 'package:max_tools/features/tools/tool_registry.dart';
+import 'package:max_tools/features/tools/variable_store.dart';
 
 import '../support/fixture_registry.dart';
 

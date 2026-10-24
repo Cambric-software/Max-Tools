@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:max_tools/tools/apps/password_vault_tool.dart';
+import 'package:max_tools/features/tools/apps/password_vault_tool.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Behaviour tests for the encrypted vault.

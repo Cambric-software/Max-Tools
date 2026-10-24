@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
-import 'package:max_tools/tools/apps/image_tool.dart';
+import 'package:max_tools/features/tools/apps/image_tool.dart';
 
 /// Tests for the image pipeline, run against a generated image.
 void main() {

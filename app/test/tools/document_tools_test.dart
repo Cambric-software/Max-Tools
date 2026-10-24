@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:max_tools/tools/apps/notes_tool.dart';
-import 'package:max_tools/tools/apps/reading_aid_tool.dart';
+import 'package:max_tools/features/tools/apps/notes_tool.dart';
+import 'package:max_tools/features/tools/apps/reading_aid_tool.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Behaviour tests for the two document tools added after the mass rebuild.

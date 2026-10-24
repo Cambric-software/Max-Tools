@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:max_tools/screens/tools/tool_runner_screen.dart';
-import 'package:max_tools/screens/tools/tools_screen.dart';
-import 'package:max_tools/tools/tool_descriptor.dart';
-import 'package:max_tools/tools/tool_registry.dart';
-import 'package:max_tools/tools/tools_scope.dart';
+import 'package:max_tools/features/screens/tools/tool_runner_screen.dart';
+import 'package:max_tools/features/screens/tools/tools_screen.dart';
+import 'package:max_tools/features/tools/tool_descriptor.dart';
+import 'package:max_tools/features/tools/tool_registry.dart';
+import 'package:max_tools/features/tools/tools_scope.dart';
 
 import '../support/fixture_registry.dart';
 

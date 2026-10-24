@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:max_tools/core/config/cambric_config.dart';
 import 'package:max_tools/main.dart';
-import 'package:max_tools/tools/variable_store.dart';
+import 'package:max_tools/features/tools/variable_store.dart';
 
 void main() {
   const config = CambricConfig(

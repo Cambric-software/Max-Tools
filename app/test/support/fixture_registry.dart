@@ -14,8 +14,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:max_tools/tools/tool_descriptor.dart';
-import 'package:max_tools/tools/tool_registry.dart';
+import 'package:max_tools/features/tools/tool_descriptor.dart';
+import 'package:max_tools/features/tools/tool_registry.dart';
 
 /// Ordinary English the fixture vocabulary assumes a person knows, so the
 /// corrector does not rewrite it into a tool word.

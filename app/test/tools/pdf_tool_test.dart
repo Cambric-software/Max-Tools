@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
-import 'package:max_tools/tools/apps/pdf_tool.dart';
+import 'package:max_tools/features/tools/apps/pdf_tool.dart';
 
 /// Tests that the PDF builder produces real PDF bytes.
 void main() {

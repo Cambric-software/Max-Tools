@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:max_tools/tools/tool_descriptor.dart';
-import 'package:max_tools/tools/tool_registry.dart';
+import 'package:max_tools/features/tools/tool_descriptor.dart';
+import 'package:max_tools/features/tools/tool_registry.dart';
 
 import '../support/fixture_registry.dart';
 

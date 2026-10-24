@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:max_tools/tools/catalog/tool_catalog.dart';
-import 'package:max_tools/tools/tool_descriptor.dart';
+import 'package:max_tools/features/tools/catalog/tool_catalog.dart';
+import 'package:max_tools/features/tools/tool_descriptor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Tests for the catalog the product actually ships.
