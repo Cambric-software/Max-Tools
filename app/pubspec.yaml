@@ -1,7 +1,7 @@
 name: max_tools
 description: Max Tools - an all-in-one toolkit for developers, animators, freelancers and business users.
 publish_to: "none"
-version: 0.1.1+2
+version: 0.2.0+1
 
 environment:
   sdk: ">=3.5.0 <4.0.0"
