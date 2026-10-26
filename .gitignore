@@ -18,3 +18,4 @@ Thumbs.db
 # Cambric local state
 .cambric/
 
+app/pubspec.lock
