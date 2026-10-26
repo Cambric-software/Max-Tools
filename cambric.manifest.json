@@ -2,19 +2,20 @@
   "manifestVersion": 1,
   "product": {
     "type": "app",
-    "name": "Cambric App",
-    "id": "cambric-app",
-    "packageId": "com.cambric.app",
-    "version": "0.1.0",
+    "name": "Max Tools",
+    "id": "max-tools",
+    "packageId": "com.cambric.max_tools",
+    "version": "0.2.0",
     "buildNumber": 1,
     "releaseChannel": "stable",
     "publisher": "Cambric",
     "developer": "Cambric",
     "website": "https://cambric.dev",
-    "repository": "Cambric-software/app-template"
+    "repository": "Cambric-software/Max-Tools"
   },
   "platforms": ["android", "windows", "linux"],
   "capabilities": {"offline": true, "updates": true, "ecosystem": true, "localization": true},
   "locales": ["en"],
-  "cambricTemplateVersion": "0.1.0"
+  "cambricTemplateVersion": "0.1.0",
+  "productLine": "Max Tools"
 }

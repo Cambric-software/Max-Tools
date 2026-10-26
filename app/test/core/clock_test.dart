@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cambric_app/core/lifecycle/clock.dart';
+import 'package:max_tools/core/lifecycle/clock.dart';
 
 void main() {
   group('SystemClock', () {

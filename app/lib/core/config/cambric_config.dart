@@ -119,7 +119,7 @@ class CambricConfig {
       productId:
           product['id']?.toString() ?? 'cambric-app-product',
       productName:
-          product['name']?.toString() ?? 'Cambric App Product',
+          product['name']?.toString() ?? 'Max Tools',
       subtitle: product['subtitle']?.toString(),
       description: product['description']?.toString(),
       publisher: product['publisher']?.toString(),
@@ -170,7 +170,7 @@ class CambricConfig {
     if (!await file.exists()) {
       return const CambricConfig(
         productId: 'cambric-app-product',
-        productName: 'Cambric App Product',
+        productName: 'Max Tools',
         version: '1.0.0',
         templateVersion: '1.0.0',
       );
@@ -184,7 +184,7 @@ class CambricConfig {
       // Malformed config — return defaults rather than crash.
       return const CambricConfig(
         productId: 'cambric-app-product',
-        productName: 'Cambric App Product',
+        productName: 'Max Tools',
         version: '1.0.0',
         templateVersion: '1.0.0',
       );

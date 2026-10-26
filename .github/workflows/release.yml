@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+env:
+  # Single source of truth for the version every job stamps into its output.
+  RELEASE_VERSION: ${{ github.ref_name }}
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -34,7 +38,22 @@ jobs:
         working-directory: app
         run: flutter build windows --release
 
-      - name: Generate checksum
+      - name: Stage the versioned install layout
+        shell: pwsh
+        run: |
+          # The installer lays the app out as <root>/versions/<version>/ with a
+          # current.txt pointer, which is what lets the app update itself later
+          # without overwriting files Windows has open.
+          # Normalise: Inno Setup and dpkg both reject a pre-release
+          # suffix in a version, so v0.2.0-beta1 becomes 0.2.0.
+          $version = (($env:RELEASE_VERSION -replace '^v', '') -split '-')[0]
+          New-Item -ItemType Directory -Force -Path staging | Out-Null
+          Copy-Item "app/build/windows/x64/runner/Release/*" staging -Recurse -Force
+          # current.txt has no trailing newline: the reader trims, but keeping
+          # the file byte-exact avoids surprises.
+          [System.IO.File]::WriteAllText("$PWD/staging-current.txt", $version)
+
+      - name: Package the portable zip
         shell: pwsh
         run: |
           $src = "app/build/windows/x64/runner/Release"
@@ -42,12 +61,44 @@ jobs:
           $hash = (Get-FileHash windows.zip -Algorithm SHA256).Hash.ToLower()
           "$hash  windows.zip" | Out-File -FilePath windows.zip.sha256 -Encoding ASCII
 
+      - name: Install Inno Setup
+        run: choco install innosetup --yes --no-progress --limit-output
+
+      - name: Build the setup executable
+        shell: pwsh
+        run: |
+          $version = (($env:RELEASE_VERSION -replace '^v', '') -split '-')[0]
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { throw "ISCC.exe not found at $iscc" }
+          & $iscc "/DAppVersion=$version" "installer\max_tools.iss"
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with $LASTEXITCODE" }
+          Get-ChildItem release-out
+
+      - name: Checksum the installer and add a stable alias
+        shell: pwsh
+        run: |
+          # The download page links releases/latest/download/<name>, which
+          # needs a filename that does not change every release. Publish the
+          # versioned file people keep on disk, plus a stable alias for the
+          # page. Both are the same bytes.
+          $installer = Get-ChildItem release-out -Filter "MaxTools-Setup-*.exe" | Select-Object -First 1
+          if (-not $installer) { throw "No installer exe was produced" }
+          $hash = (Get-FileHash $installer.FullName -Algorithm SHA256).Hash.ToLower()
+          "$hash  $($installer.Name)" | Out-File -FilePath "release-out/$($installer.Name).sha256" -Encoding ASCII
+
+          Copy-Item $installer.FullName "release-out/MaxTools-Setup.exe" -Force
+          "ALIASHASH  MaxTools-Setup.exe" | Out-Null
+          $aliasHash = (Get-FileHash "release-out/MaxTools-Setup.exe" -Algorithm SHA256).Hash.ToLower()
+          "$aliasHash  MaxTools-Setup.exe" | Out-File -FilePath "release-out/MaxTools-Setup.exe.sha256" -Encoding ASCII
+          Get-ChildItem release-out | Select-Object Name, Length
+
       - uses: actions/upload-artifact@v4
         with:
           name: windows
           path: |
             windows.zip
             windows.zip.sha256
+            release-out/
 
   build-linux:
     runs-on: ubuntu-latest
@@ -80,10 +131,66 @@ jobs:
         working-directory: app
         run: flutter build linux --release
 
-      - name: Package and checksum
+      - name: Package the portable tarball
         run: |
           tar -czf linux.tar.gz -C app/build/linux/x64/release/bundle .
           sha256sum linux.tar.gz > linux.tar.gz.sha256
+
+      - name: Build the .deb package
+        run: |
+          # Versioned layout, mirroring the Windows installer, so a .deb
+          # install can also update itself in place.
+          set -euo pipefail
+          VERSION="${RELEASE_VERSION#v}"
+          # Strip any pre-release suffix: dpkg versions cannot contain it.
+          VERSION="${VERSION%%-*}"
+          PKG="max-tools"
+          ROOT="debroot"
+          # RELATIVE path for building the tree, ABSOLUTE for anything the
+          # installed system will execute or read. Conflating the two put
+          # "debroot/usr/lib/max-tools/..." into the desktop Exec, which means
+          # the launcher would resolve it against the user's working directory
+          # and never start the app.
+          INSTALL_ABS="/usr/lib/max-tools"
+          INSTALL="$ROOT$INSTALL_ABS"
+          # Every directory must exist before any file is written into it.
+          mkdir -p "$INSTALL/versions/$VERSION" \
+                   "$ROOT/DEBIAN" \
+                   "$ROOT/usr/share/applications" \
+                   "$ROOT/usr/share/icons/hicolor/x-icon/apps"
+          cp -r app/build/linux/x64/release/bundle/. "$INSTALL/versions/$VERSION/"
+          printf '%s' "$VERSION" > "$INSTALL/current.txt"
+          cat > "$ROOT/DEBIAN/control" <<EOF
+          Package: $PKG
+          Version: $VERSION
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Maintainer: Cambric Software <support@cambric.dev>
+          Depends: libgtk-3-0, libstdc++6
+          Installed-Size: $(du -sk "$INSTALL" | cut -f1)
+          Description: All-in-one toolkit for developers, animators, freelancers and business users.
+           Max Tools bundles 106 utilities behind one searchable interface and a
+           command palette that understands plain English.
+          EOF
+          cat > "$ROOT/usr/share/applications/max-tools.desktop" <<EOF
+          [Desktop Entry]
+          Type=Application
+          Name=Max Tools
+          Comment=All-in-one toolkit
+          Exec=$INSTALL_ABS/versions/$VERSION/max_tools
+          Icon=max-tools
+          Categories=Utility;Development;
+          Terminal=false
+          EOF
+          cp app/windows/runner/resources/app_icon.ico "$ROOT/usr/share/icons/hicolor/x-icon/apps/max-tools.ico"
+          dpkg-deb --build --root-owner-group "$ROOT" "max-tools_$VERSION.deb"
+          sha256sum "max-tools_$VERSION.deb" > "max-tools_$VERSION.deb.sha256"
+          # Stable alias so the download page can link releases/latest/download
+          # without editing every release. Identical bytes.
+          cp "max-tools_$VERSION.deb" max-tools.deb
+          sha256sum max-tools.deb > max-tools.deb.sha256
+          ls -la max-tools*.deb*
 
       - uses: actions/upload-artifact@v4
         with:
@@ -91,6 +198,8 @@ jobs:
           path: |
             linux.tar.gz
             linux.tar.gz.sha256
+            *.deb
+            *.deb.sha256
 
   build-android:
     runs-on: ubuntu-latest
@@ -137,14 +246,24 @@ jobs:
       - name: List artifacts
         run: find release-files -type f
 
+      - name: Assemble the asset list
+        id: assets
+        run: |
+          # Build the file list from whatever actually exists, so a platform
+          # that failed to produce an installer cannot silently produce a
+          # release with dead download buttons.
+          {
+            echo "files<<EOF"
+            find release-files -type f \( -name '*.zip' -o -name '*.tar.gz' \
+              -o -name '*.exe' -o -name '*.deb' -o -name '*.apk' \
+              -o -name '*.sha256' \) | sort
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: |
-            release-files/windows/windows.zip
-            release-files/windows/windows.zip.sha256
-            release-files/linux/linux.tar.gz
-            release-files/linux/linux.tar.gz.sha256
-            release-files/android/android.apk
-            release-files/android/android.apk.sha256
+          fail_on_unmatched_files: true
+          files: ${{ steps.assets.outputs.files }}

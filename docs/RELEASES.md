@@ -71,10 +71,28 @@ Configure your repository in `cambric_config.json`:
 
 ## Checklist before releasing
 
-- [ ] Version updated in `cambric_config.json` and `pubspec.yaml`
+- [ ] Version updated in `cambric_config.json`, `pubspec.yaml` **and**
+      `app/cambric.manifest.json` (all three must match)
 - [ ] `flutter analyze` passes
 - [ ] `flutter test` passes
-- [ ] `.\scripts-doctor.ps1` passes
-- [ ] No secrets in source code
+- [ ] No secrets in source code (`security.yml` gates this)
 - [ ] Documentation updated
 - [ ] Git tag created and pushed
+
+The `Build` workflow already compiles the Windows installer and packages the
+`.deb` on every push, so a broken installer fails long before a tag is cut.
+The release then publishes:
+
+| Asset | What it is |
+|---|---|
+| `MaxTools-Setup-<version>.exe` | Windows installer, per-user |
+| `MaxTools-Setup.exe` | Stable alias of the same file, for the download page |
+| `windows.zip` | Portable Windows build |
+| `max-tools_<version>.deb` | Linux package, versioned layout |
+| `max-tools.deb` | Stable alias of the same package |
+| `linux.tar.gz` | Portable Linux build |
+| `android.apk` | Android build |
+
+The asset list is assembled from what each job actually produced, with
+`fail_on_unmatched_files`, so a failed platform cannot leave a dead download
+button.

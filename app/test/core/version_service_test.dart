@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cambric_app/core/lifecycle/version_service.dart';
+import 'package:max_tools/core/lifecycle/version_service.dart';
 
 void main() {
   group('AppVersion', () {

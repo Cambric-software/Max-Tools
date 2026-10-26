@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.cambric" "\0"
-            VALUE "FileDescription", "cambric_app" "\0"
+            VALUE "CompanyName", "Cambric Software" "\0"
+            VALUE "FileDescription", "Max Tools" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "cambric_app" "\0"
+            VALUE "InternalName", "max_tools" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.cambric. All rights reserved." "\0"
-            VALUE "OriginalFilename", "cambric_app.exe" "\0"
-            VALUE "ProductName", "cambric_app" "\0"
+            VALUE "OriginalFilename", "max_tools.exe" "\0"
+            VALUE "ProductName", "Max Tools" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

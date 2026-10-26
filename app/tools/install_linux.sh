@@ -22,8 +22,8 @@ mkdir -p "$INSTALL_DIR" "$BIN_DIR" "$DESKTOP_DIR"
 # Copy bundle
 cp -r "$BUILD_PATH/." "$INSTALL_DIR/"
 
-# Detect the main executable (Flutter Linux produces 'cambric_app' by default)
-MAIN_BINARY="$INSTALL_DIR/cambric_app"
+# Detect the main executable (Flutter Linux produces 'max_tools' by default)
+MAIN_BINARY="$INSTALL_DIR/max_tools"
 
 if [ ! -f "$MAIN_BINARY" ]; then
     echo "Expected Flutter executable was not found: $MAIN_BINARY"

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cambric_app/core/storage/migration_service.dart';
+import 'package:max_tools/core/storage/migration_service.dart';
 
 class _AddFieldMigration extends Migration {
   _AddFieldMigration() : super(fromVersion: 1, toVersion: 2);
