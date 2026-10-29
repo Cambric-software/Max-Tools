@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 import '../apps/api_tester_tool.dart';
 import '../apps/colour_toolkit_tool.dart';
+import '../apps/cron_builder_tool.dart';
 import '../apps/developer_toolkit_tool.dart';
 import '../apps/archive_tool.dart';
 import '../apps/clipboard_manager_tool.dart';
@@ -654,6 +655,26 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const FileDiffTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.cron',
+      name: 'Cron builder',
+      description: 'Build and explain cron expressions, and list the next few '
+          'times they fire.',
+      category: ToolCategory.developer,
+      icon: Icons.schedule,
+      howTo: 'Type a five-field cron expression (minute hour day month '
+          'weekday). The meaning and next runs appear below.',
+      tags: const <String>[
+        'cron', 'schedule', 'timer', 'job', 'expression', 'developer',
+      ],
+      synonyms: const <String>[
+        'cron expression',
+        'schedule a job',
+        'cron to english',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const CronBuilderTool(),
     ),
   ]);
   return registry;
