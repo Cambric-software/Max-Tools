@@ -28,6 +28,7 @@ import '../apps/file_diff_tool.dart';
 import '../apps/file_shredder_tool.dart';
 import '../apps/hash_tool.dart';
 import '../apps/image_tool.dart';
+import '../apps/json_schema_validator_tool.dart';
 import '../apps/js_minifier_tool.dart';
 import '../apps/markdown_editor_tool.dart';
 import '../apps/jwt_inspector_tool.dart';
@@ -835,6 +836,25 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const JsMinifierTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.jsonschema',
+      name: 'JSON Schema validator',
+      description: 'Validate a JSON document against a JSON Schema and report '
+          'every violation with its path.',
+      category: ToolCategory.developer,
+      icon: Icons.rule,
+      howTo: 'Paste a schema on the left and data on the right. Errors appear '
+          'below.',
+      tags: const <String>[
+        'json', 'schema', 'validate', 'developer',
+      ],
+      synonyms: const <String>[
+        'validate json schema',
+        'json schema',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const JsonSchemaValidatorTool(),
     ),
   ]);
   return registry;
