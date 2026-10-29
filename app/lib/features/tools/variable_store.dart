@@ -236,6 +236,29 @@ class VariableStore {
     save();
   }
 
+  /// Export all variables as a JSON string.
+  String exportJson() {
+    return const JsonEncoder.withIndent('  ').convert(
+      _variables.values.map((v) => v.toJson()).toList(),
+    );
+  }
+
+  /// Import variables from a JSON string. Returns the number imported.
+  int importJson(String raw) {
+    final decoded = jsonDecode(raw);
+    if (decoded is! List) return 0;
+    var count = 0;
+    for (final entry in decoded) {
+      if (entry is! Map<String, dynamic>) continue;
+      final v = Variable.fromJson(entry);
+      if (!Variable.isValidName(v.name)) continue;
+      _variables[v.name.toLowerCase()] = v;
+      count++;
+    }
+    save();
+    return count;
+  }
+
   /// Names of every variable, for autocompletion.
   List<String> names() => _variables.keys.toList()..sort();
 
