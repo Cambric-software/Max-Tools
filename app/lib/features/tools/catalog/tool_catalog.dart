@@ -40,6 +40,7 @@ import '../apps/system_command_tool.dart';
 import '../apps/text_toolkit_tool.dart';
 import '../apps/timestamp_converter_tool.dart';
 import '../apps/unit_converter_tool.dart';
+import '../apps/uuid_generator_tool.dart';
 import '../apps/wealth_tool.dart';
 import '../tool_descriptor.dart';
 import '../tool_registry.dart';
@@ -736,6 +737,26 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const TimestampConverterTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.uuid',
+      name: 'UUID generator',
+      description: 'Generate UUIDs (v1, v4, v7) and inspect an existing UUID '
+          'for version and variant.',
+      category: ToolCategory.developer,
+      icon: Icons.fingerprint,
+      howTo: 'Choose a version and a count, then generate. Paste a UUID below '
+          'to inspect it.',
+      tags: const <String>[
+        'uuid', 'guid', 'generate', 'inspect', 'id', 'developer',
+      ],
+      synonyms: const <String>[
+        'generate uuid',
+        'uuid v4',
+        'inspect uuid',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const UuidGeneratorTool(),
     ),
   ]);
   return registry;
