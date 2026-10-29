@@ -6,6 +6,9 @@ import 'core/ecosystem/cambric_ecosystem_service.dart';
 import 'core/ecosystem/product_registry_service.dart';
 import 'core/lifecycle/app_lifecycle_service.dart';
 import 'core/config/cambric_config.dart';
+import 'core/security/security_service.dart';
+import 'core/services/service_registry.dart';
+import 'core/subscription/subscription_service.dart';
 import 'core/settings/app_settings.dart';
 import 'core/storage/cambric_paths.dart';
 import 'core/updates/install_layout.dart';
@@ -55,6 +58,16 @@ Future<void> main() async {
   // Read the person's stored preferences before the first frame, so the app
   // opens in the theme they chose instead of flashing the default first.
   await AppSettings.instance.load();
+
+  // Load subscription state (offline license validation).
+  final subscription = SubscriptionService(
+    config: config,
+    security: const SecurityService(),
+  );
+  await subscription.load();
+
+  final services = ServiceRegistry();
+  services.register<SubscriptionService>(subscription);
 
   // Initialize the local Cambric ecosystem service.
   final ecosystem = CambricEcosystemService();
