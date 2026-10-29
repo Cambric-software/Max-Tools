@@ -16,6 +16,7 @@ import '../apps/colour_toolkit_tool.dart';
 import '../apps/cron_builder_tool.dart';
 import '../apps/developer_toolkit_tool.dart';
 import '../apps/archive_tool.dart';
+import '../apps/chmod_calculator_tool.dart';
 import '../apps/clipboard_manager_tool.dart';
 import '../apps/disk_analyser_tool.dart';
 import '../apps/duplicate_finder_tool.dart';
@@ -757,6 +758,24 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const UuidGeneratorTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.chmod',
+      name: 'Chmod calculator',
+      description: 'Convert between octal and symbolic (rwx) file permissions.',
+      category: ToolCategory.developer,
+      icon: Icons.lock,
+      howTo: 'Type an octal mode or tick the permission boxes.',
+      tags: const <String>[
+        'chmod', 'permissions', 'octal', 'rwx', 'file', 'developer',
+      ],
+      synonyms: const <String>[
+        'chmod calculator',
+        'file permissions',
+        'octal to rwx',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const ChmodCalculatorTool(),
     ),
   ]);
   return registry;
