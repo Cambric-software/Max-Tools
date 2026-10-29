@@ -25,6 +25,7 @@ import '../apps/env_editor_tool.dart';
 import '../apps/encoding_converter_tool.dart';
 import '../apps/file_encryption_tool.dart';
 import '../apps/file_diff_tool.dart';
+import '../apps/git_diff_viewer_tool.dart';
 import '../apps/file_shredder_tool.dart';
 import '../apps/hash_tool.dart';
 import '../apps/image_tool.dart';
@@ -855,6 +856,23 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const JsonSchemaValidatorTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.gitdiff',
+      name: 'Git diff viewer',
+      description: 'Read a unified diff and see added/removed lines per file.',
+      category: ToolCategory.developer,
+      icon: Icons.difference,
+      howTo: 'Paste a unified diff (git diff or a .patch file).',
+      tags: const <String>[
+        'git', 'diff', 'patch', 'unified', 'developer',
+      ],
+      synonyms: const <String>[
+        'view git diff',
+        'read a patch',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const GitDiffViewerTool(),
     ),
   ]);
   return registry;
