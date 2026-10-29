@@ -20,6 +20,7 @@ import '../apps/disk_analyser_tool.dart';
 import '../apps/duplicate_finder_tool.dart';
 import '../apps/encoding_converter_tool.dart';
 import '../apps/file_encryption_tool.dart';
+import '../apps/file_diff_tool.dart';
 import '../apps/file_shredder_tool.dart';
 import '../apps/hash_tool.dart';
 import '../apps/image_tool.dart';
@@ -633,6 +634,26 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const EncodingConverterTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.diff',
+      name: 'File diff',
+      description: 'Compare two pieces of text and see added, removed and '
+          'unchanged lines with their line numbers.',
+      category: ToolCategory.developer,
+      icon: Icons.difference,
+      howTo: 'Paste the old version on the left and the new one on the right. '
+          'Lines are matched exactly.',
+      tags: const <String>[
+        'diff', 'compare', 'difference', 'merge', 'lines', 'developer',
+      ],
+      synonyms: const <String>[
+        'compare two files',
+        'what changed',
+        'diff text',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const FileDiffTool(),
     ),
   ]);
   return registry;
