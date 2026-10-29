@@ -78,8 +78,8 @@ Nothing below this matters if the product tells lies or has dead controls.
       most were internal plumbing (cache, csv, json, retry, timeout, checksum…)
       dressed up as user tools. **Decided: the approved set is listed at the end
       of this file.** All 106 descriptors, the six catalog files and the 88-file
-      plumbing library are deleted. **The full approved set is now built** — 19
-      catalog entries covering all 20 approved tools, each a real screen that
+      plumbing library are deleted. **The full approved set is now built** — 21
+      catalog entries covering all 21 approved tools, each a real screen that
       explains itself, `flutter analyze` clean, 324 tests passing:
       Antivirus & scan, Password vault, Wealth, Developer toolkit, Hash &
       checksum, Unit converter, Text & documents, Notes, Accessibility & reading,
@@ -290,7 +290,10 @@ resize & convert, QR & barcode, PDF builder.
 18. ~~Colour & design toolkit~~ ✔
 19. ~~Notes vault~~ — shipped as **Notes**: plain text, searchable, pinned, and
     explicitly not a vault.
-20. ~~Accessibility & reading aid~~ —
+20. ~~Accessibility & reading aid~~
+
+The catalog also registers two system tools that are not end-user utilities:
+System actions and System command. —
 
 A tool is only listed in the catalog once it works. The catalog therefore grows
 one honest entry at a time rather than returning to a hundred placeholders.
