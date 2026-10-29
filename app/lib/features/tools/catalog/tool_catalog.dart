@@ -21,6 +21,7 @@ import '../apps/chmod_calculator_tool.dart';
 import '../apps/clipboard_manager_tool.dart';
 import '../apps/disk_analyser_tool.dart';
 import '../apps/duplicate_finder_tool.dart';
+import '../apps/env_editor_tool.dart';
 import '../apps/encoding_converter_tool.dart';
 import '../apps/file_encryption_tool.dart';
 import '../apps/file_diff_tool.dart';
@@ -796,6 +797,24 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const CurlBuilderTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.env',
+      name: '.env editor',
+      description: 'Parse and edit a .env file as a table of keys and values.',
+      category: ToolCategory.developer,
+      icon: Icons.settings,
+      howTo: 'Paste a .env file, edit rows, then copy the rebuilt file.',
+      tags: const <String>[
+        'env', 'environment', 'dotenv', 'config', 'developer',
+      ],
+      synonyms: const <String>[
+        'edit env file',
+        'dotenv editor',
+        'environment variables',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const EnvEditorTool(),
     ),
   ]);
   return registry;
