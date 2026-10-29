@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 import '../apps/api_tester_tool.dart';
 import '../apps/colour_toolkit_tool.dart';
+import '../apps/curl_builder_tool.dart';
 import '../apps/cron_builder_tool.dart';
 import '../apps/developer_toolkit_tool.dart';
 import '../apps/archive_tool.dart';
@@ -776,6 +777,25 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const ChmodCalculatorTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.curl',
+      name: 'cURL builder',
+      description: 'Build a curl command from its parts, or parse one back '
+          'into method, URL, headers and body.',
+      category: ToolCategory.developer,
+      icon: Icons.http,
+      howTo: 'Fill the fields to build, or paste a curl command to parse it.',
+      tags: const <String>[
+        'curl', 'http', 'request', 'headers', 'body', 'developer',
+      ],
+      synonyms: const <String>[
+        'curl command',
+        'build curl',
+        'parse curl',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const CurlBuilderTool(),
     ),
   ]);
   return registry;
