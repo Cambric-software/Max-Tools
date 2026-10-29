@@ -22,6 +22,7 @@ import '../apps/file_encryption_tool.dart';
 import '../apps/file_shredder_tool.dart';
 import '../apps/hash_tool.dart';
 import '../apps/image_tool.dart';
+import '../apps/json_formatter_tool.dart';
 import '../apps/notes_tool.dart';
 import '../apps/password_vault_tool.dart';
 import '../apps/pdf_tool.dart';
@@ -589,6 +590,27 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const RegexTesterTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.json',
+      name: 'JSON formatter',
+      description: 'Format, validate and minify JSON. Shows the parse error '
+          'when the input is invalid.',
+      category: ToolCategory.developer,
+      icon: Icons.data_object,
+      howTo: 'Paste JSON, press Format. Switch between pretty and minified '
+          'output, then copy.',
+      tags: const <String>[
+        'json', 'format', 'validate', 'minify', 'pretty', 'developer',
+      ],
+      synonyms: const <String>[
+        'format json',
+        'validate json',
+        'pretty print json',
+        'minify json',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const JsonFormatterTool(),
     ),
   ]);
   return registry;
