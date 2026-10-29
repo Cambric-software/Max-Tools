@@ -25,6 +25,7 @@ import '../apps/file_diff_tool.dart';
 import '../apps/file_shredder_tool.dart';
 import '../apps/hash_tool.dart';
 import '../apps/image_tool.dart';
+import '../apps/markdown_editor_tool.dart';
 import '../apps/jwt_inspector_tool.dart';
 import '../apps/json_formatter_tool.dart';
 import '../apps/notes_tool.dart';
@@ -695,6 +696,25 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const JwtInspectorTool(),
+    ),
+    ToolDescriptor(
+      id: 'documents.markdown',
+      name: 'Markdown editor',
+      description: 'Write Markdown on the left and read a live preview on the '
+          'right.',
+      category: ToolCategory.documents,
+      icon: Icons.article,
+      howTo: 'Type Markdown. The preview updates as you type.',
+      tags: const <String>[
+        'markdown', 'md', 'editor', 'preview', 'docs', 'readme',
+      ],
+      synonyms: const <String>[
+        'markdown editor',
+        'preview markdown',
+        'write a readme',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const MarkdownEditorTool(),
     ),
   ]);
   return registry;
