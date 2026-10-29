@@ -25,6 +25,7 @@ import '../apps/file_diff_tool.dart';
 import '../apps/file_shredder_tool.dart';
 import '../apps/hash_tool.dart';
 import '../apps/image_tool.dart';
+import '../apps/jwt_inspector_tool.dart';
 import '../apps/json_formatter_tool.dart';
 import '../apps/notes_tool.dart';
 import '../apps/password_vault_tool.dart';
@@ -675,6 +676,25 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const CronBuilderTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.jwt',
+      name: 'JWT inspector',
+      description: 'Decode a JSON Web Token and show its header, payload and '
+          'signature, including expiry in local time.',
+      category: ToolCategory.developer,
+      icon: Icons.vpn_key,
+      howTo: 'Paste a JWT. The signature is shown but not verified.',
+      tags: const <String>[
+        'jwt', 'token', 'decode', 'claims', 'expiry', 'developer',
+      ],
+      synonyms: const <String>[
+        'decode jwt',
+        'inspect token',
+        'jwt claims',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const JwtInspectorTool(),
     ),
   ]);
   return registry;
