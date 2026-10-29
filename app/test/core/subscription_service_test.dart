@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:max_tools/core/config/cambric_config.dart';
 import 'package:max_tools/core/security/security_service.dart';
-import 'package:max_tools/core/subscription/license_key.dart';
+
 import 'package:max_tools/core/subscription/subscription_service.dart';
 import 'package:max_tools/core/subscription/subscription_tier.dart';
 

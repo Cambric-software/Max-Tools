@@ -15,6 +15,7 @@ import '../apps/api_tester_tool.dart';
 import '../apps/colour_toolkit_tool.dart';
 import '../apps/developer_toolkit_tool.dart';
 import '../apps/archive_tool.dart';
+import '../apps/clipboard_manager_tool.dart';
 import '../apps/disk_analyser_tool.dart';
 import '../apps/duplicate_finder_tool.dart';
 import '../apps/file_encryption_tool.dart';
@@ -546,6 +547,27 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const SystemCommandTool(),
+    ),
+    ToolDescriptor(
+      id: 'productivity.clipboard',
+      name: 'Clipboard manager',
+      description: 'Capture, search and reuse clipboard history. Pin the '
+          'entries you use every day and put any of them back with one tap.',
+      category: ToolCategory.everyday,
+      icon: Icons.content_paste,
+      howTo: 'Press Capture to store the current clipboard, then search or tap '
+          'an entry to copy it back.',
+      tags: const <String>[
+        'clipboard', 'copy', 'paste', 'history', 'pin', 'search', 'reuse',
+      ],
+      synonyms: const <String>[
+        'clipboard history',
+        'remember what I copied',
+        'paste an old copy',
+        'pin a clipboard entry',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const ClipboardManagerTool(),
     ),
   ]);
   return registry;
