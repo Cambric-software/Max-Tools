@@ -28,6 +28,7 @@ import '../apps/file_diff_tool.dart';
 import '../apps/file_shredder_tool.dart';
 import '../apps/hash_tool.dart';
 import '../apps/image_tool.dart';
+import '../apps/js_minifier_tool.dart';
 import '../apps/markdown_editor_tool.dart';
 import '../apps/jwt_inspector_tool.dart';
 import '../apps/json_formatter_tool.dart';
@@ -815,6 +816,25 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const EnvEditorTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.jsmin',
+      name: 'JS minifier / beautifier',
+      description: 'Minify or beautify JavaScript by collapsing whitespace '
+          'and removing comments.',
+      category: ToolCategory.developer,
+      icon: Icons.compress,
+      howTo: 'Paste JavaScript, choose minify or beautify, read the result.',
+      tags: const <String>[
+        'javascript', 'js', 'minify', 'beautify', 'format', 'developer',
+      ],
+      synonyms: const <String>[
+        'minify javascript',
+        'beautify js',
+        'js formatter',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const JsMinifierTool(),
     ),
   ]);
   return registry;
