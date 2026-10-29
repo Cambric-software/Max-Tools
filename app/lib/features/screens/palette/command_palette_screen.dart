@@ -211,10 +211,56 @@ class _CommandPaletteDialogState extends State<CommandPaletteDialog> {
                 ],
               ),
               const Divider(height: 1),
+              if (_input.text.trim().isNotEmpty) _suggestions(),
               Flexible(child: _body()),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  List<ToolDescriptor> get _fuzzySuggestions {
+    final q = _input.text.trim().toLowerCase();
+    if (q.isEmpty) return const <ToolDescriptor>[];
+    final registry = _registry;
+    final all = registry.all();
+    final scored = <MapEntry<ToolDescriptor, int>>[];
+    for (final t in all) {
+      var score = 0;
+      if (t.name.toLowerCase().contains(q)) score += 3;
+      if (t.id.toLowerCase().contains(q)) score += 2;
+      for (final tag in t.tags) {
+        if (tag.toLowerCase().contains(q)) score += 1;
+      }
+      for (final syn in t.synonyms) {
+        if (syn.toLowerCase().contains(q)) score += 1;
+      }
+      if (score > 0) scored.add(MapEntry<ToolDescriptor, int>(t, score));
+    }
+    scored.sort((a, b) => b.value.compareTo(a.value));
+    return scored.take(8).map((e) => e.key).toList();
+  }
+
+  Widget _suggestions() {
+    final sugg = _fuzzySuggestions;
+    if (sugg.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 4,
+        children: <Widget>[
+          for (final t in sugg)
+            ActionChip(
+              avatar: Icon(t.icon, size: 16),
+              label: Text(t.name),
+              onPressed: () {
+                _input.text = t.name;
+                _onChanged(t.name);
+              },
+            ),
+        ],
       ),
     );
   }
