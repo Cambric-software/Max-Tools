@@ -20,7 +20,9 @@ enum _DevTask {
   csvToJson('CSV — to JSON'),
   jsonToCsv('JSON ? to CSV'),
   sqlFormat('SQL ? format'),
-  cidr('CIDR ? subnet info');
+  cidr('CIDR ? subnet info'),
+  htmlMinify('HTML ? minify'),
+  httpStatus('HTTP status ? lookup');
 
   const _DevTask(this.label);
   final String label;
@@ -79,6 +81,8 @@ class _DeveloperToolkitToolState extends State<DeveloperToolkitTool> {
         _DevTask.jsonToCsv => _jsonToCsv(text),
         _DevTask.sqlFormat => _sqlFormat(text),
         _DevTask.cidr => _cidr(text),
+        _DevTask.htmlMinify => _htmlMinify(text),
+        _DevTask.httpStatus => _httpStatus(text),
       };
       setState(() {
         _output = result;
@@ -274,6 +278,66 @@ class _DeveloperToolkitToolState extends State<DeveloperToolkitTool> {
         'Hosts:     $hosts\n'
         'Range:     ${toIp(network + 1)} - ${toIp(broadcast - 1)}';
   }
+  static String _htmlMinify(String text) {
+    var s = text;
+    // Remove comments.
+    s = s.replaceAll(RegExp(r'<!--.*?-->', dotAll: true), '');
+    // Collapse whitespace between tags.
+    s = s.replaceAll(RegExp(r'>\s+<'), '><');
+    // Collapse multiple spaces/newlines in text nodes.
+    s = s.replaceAll(RegExp(r'\s{2,}'), ' ');
+    return s.trim();
+  }
+
+  static String _httpStatus(String text) {
+    final code = int.tryParse(text.trim());
+    if (code == null) {
+      return 'Enter an HTTP status code (e.g. 404).';
+    }
+    const statuses = <int, String>{
+      100: 'Continue',
+      101: 'Switching Protocols',
+      200: 'OK',
+      201: 'Created',
+      202: 'Accepted',
+      204: 'No Content',
+      301: 'Moved Permanently',
+      302: 'Found',
+      304: 'Not Modified',
+      307: 'Temporary Redirect',
+      308: 'Permanent Redirect',
+      400: 'Bad Request',
+      401: 'Unauthorized',
+      403: 'Forbidden',
+      404: 'Not Found',
+      405: 'Method Not Allowed',
+      408: 'Request Timeout',
+      409: 'Conflict',
+      410: 'Gone',
+      413: 'Payload Too Large',
+      415: 'Unsupported Media Type',
+      422: 'Unprocessable Entity',
+      429: 'Too Many Requests',
+      500: 'Internal Server Error',
+      501: 'Not Implemented',
+      502: 'Bad Gateway',
+      503: 'Service Unavailable',
+      504: 'Gateway Timeout',
+    };
+    final name = statuses[code];
+    if (name == null) return 'Unknown status code: $code';
+    final klass = code ~/ 100;
+    final kind = switch (klass) {
+      1 => 'Informational',
+      2 => 'Success',
+      3 => 'Redirection',
+      4 => 'Client error',
+      5 => 'Server error',
+      _ => 'Unknown',
+    };
+    return '$code $name\n$kind';
+  }
+
 
 
   static String _csvCell(String value) {
@@ -394,6 +458,11 @@ class _DeveloperToolkitToolState extends State<DeveloperToolkitTool> {
               'A quick tidy, not a full formatter.',
         _DevTask.cidr =>
           'Computes the network, broadcast, mask and host count for a CIDR block.',
+        _DevTask.htmlMinify =>
+          'Strips comments and collapses whitespace in HTML. A quick tidy, not a '
+              'full formatter.',
+        _DevTask.httpStatus =>
+          'Looks up an HTTP status code and reports its name and class.',
       };
 
   @override
