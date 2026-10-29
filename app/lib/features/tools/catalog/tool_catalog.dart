@@ -38,6 +38,7 @@ import '../apps/security_scan_tool.dart';
 import '../apps/system_actions_tool.dart';
 import '../apps/system_command_tool.dart';
 import '../apps/text_toolkit_tool.dart';
+import '../apps/timestamp_converter_tool.dart';
 import '../apps/unit_converter_tool.dart';
 import '../apps/wealth_tool.dart';
 import '../tool_descriptor.dart';
@@ -715,6 +716,26 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const MarkdownEditorTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.timestamp',
+      name: 'Timestamp converter',
+      description: 'Convert between Unix timestamps and human-readable dates, '
+          'in seconds or milliseconds.',
+      category: ToolCategory.developer,
+      icon: Icons.schedule,
+      howTo: 'Paste an epoch value to read it as a date, or type a date to '
+          'get its epoch value.',
+      tags: const <String>[
+        'timestamp', 'epoch', 'unix', 'date', 'time', 'convert', 'developer',
+      ],
+      synonyms: const <String>[
+        'epoch to date',
+        'unix timestamp',
+        'date to epoch',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const TimestampConverterTool(),
     ),
   ]);
   return registry;
