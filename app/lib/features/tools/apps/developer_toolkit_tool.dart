@@ -18,7 +18,9 @@ enum _DevTask {
   timestamp('Timestamp — convert'),
   regex('Regex — test'),
   csvToJson('CSV — to JSON'),
-  jsonToCsv('JSON — to CSV');
+  jsonToCsv('JSON ? to CSV'),
+  sqlFormat('SQL ? format'),
+  cidr('CIDR ? subnet info');
 
   const _DevTask(this.label);
   final String label;
@@ -75,6 +77,8 @@ class _DeveloperToolkitToolState extends State<DeveloperToolkitTool> {
         _DevTask.regex => _regex(text, _second.text),
         _DevTask.csvToJson => _csvToJson(text),
         _DevTask.jsonToCsv => _jsonToCsv(text),
+        _DevTask.sqlFormat => _sqlFormat(text),
+        _DevTask.cidr => _cidr(text),
       };
       setState(() {
         _output = result;
@@ -218,6 +222,59 @@ class _DeveloperToolkitToolState extends State<DeveloperToolkitTool> {
     }
     return buffer.toString().trimRight();
   }
+  static String _sqlFormat(String text) {
+    const keywords = <String>{
+      'select', 'from', 'where', 'and', 'or', 'insert', 'into', 'values',
+      'update', 'set', 'delete', 'create', 'table', 'alter', 'drop', 'join',
+      'left', 'right', 'inner', 'outer', 'on', 'group', 'by', 'order', 'having',
+      'limit', 'offset', 'as', 'distinct', 'union', 'all',
+    };
+    final tokens = text.split(RegExp(r'\s+'));
+    final out = StringBuffer();
+    for (final t in tokens) {
+      if (t.isEmpty) continue;
+      final lower = t.toLowerCase();
+      if (keywords.contains(lower)) {
+        out.write('${lower.toUpperCase()} ');
+      } else {
+        out.write('$t ');
+      }
+    }
+    return out.toString().trim();
+  }
+
+  static String _cidr(String text) {
+    final input = text.trim();
+    if (input.isEmpty) throw const FormatException('Enter a CIDR like 192.168.1.0/24.');
+    final parts = input.split('/');
+    if (parts.length != 2) throw const FormatException('Expected address/prefix, e.g. 10.0.0.0/8.');
+    final ip = parts[0];
+    final prefix = int.tryParse(parts[1]);
+    if (prefix == null || prefix < 0 || prefix > 32) {
+      throw const FormatException('Prefix must be 0..32.');
+    }
+    final octets = ip.split('.');
+    if (octets.length != 4) throw const FormatException('Invalid IPv4 address.');
+    var ipInt = 0;
+    for (final o in octets) {
+      final v = int.tryParse(o);
+      if (v == null || v < 0 || v > 255) throw const FormatException('Invalid octet.');
+      ipInt = (ipInt << 8) | v;
+    }
+    final mask = prefix == 0 ? 0 : (0xFFFFFFFF << (32 - prefix)) & 0xFFFFFFFF;
+    final network = ipInt & mask;
+    final broadcast = network | (~mask & 0xFFFFFFFF);
+    final hosts = prefix >= 31 ? 0 : (1 << (32 - prefix)) - 2;
+    String toIp(int v) =>
+        '${(v >> 24) & 0xff}.${(v >> 16) & 0xff}.${(v >> 8) & 0xff}.${v & 0xff}';
+    return 'Network:   ${toIp(network)}\n'
+        'Broadcast: ${toIp(broadcast)}\n'
+        'Mask:      ${toIp(mask)}\n'
+        'Prefix:    /$prefix\n'
+        'Hosts:     $hosts\n'
+        'Range:     ${toIp(network + 1)} - ${toIp(broadcast - 1)}';
+  }
+
 
   static String _csvCell(String value) {
     if (value.contains(',') ||
@@ -284,7 +341,9 @@ class _DeveloperToolkitToolState extends State<DeveloperToolkitTool> {
         _DevTask.jsonToCsv => 'JSON array',
         _DevTask.csvToJson => 'CSV text',
         _DevTask.timestamp => 'Epoch or date (empty for now)',
-        _DevTask.uuid => 'Ignored — press Generate',
+        _DevTask.uuid => 'Ignored - press Generate',
+        _DevTask.sqlFormat => 'SQL to format',
+        _DevTask.cidr => 'CIDR (e.g. 10.0.0.0/8)',
         _ => 'Input',
       };
 
@@ -330,6 +389,11 @@ class _DeveloperToolkitToolState extends State<DeveloperToolkitTool> {
         _DevTask.jsonToCsv =>
           'Reads a JSON array of objects and writes CSV, quoting any value '
               'that contains a comma, quote or newline.',
+        _DevTask.sqlFormat =>
+          'Upper-cases SQL keywords and separates tokens with single spaces. '
+              'A quick tidy, not a full formatter.',
+        _DevTask.cidr =>
+          'Computes the network, broadcast, mask and host count for a CIDR block.',
       };
 
   @override
