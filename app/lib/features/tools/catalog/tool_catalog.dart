@@ -26,6 +26,7 @@ import '../apps/notes_tool.dart';
 import '../apps/password_vault_tool.dart';
 import '../apps/pdf_tool.dart';
 import '../apps/qr_tool.dart';
+import '../apps/regex_tester_tool.dart';
 import '../apps/reading_aid_tool.dart';
 import '../apps/security_scan_tool.dart';
 import '../apps/system_actions_tool.dart';
@@ -568,6 +569,26 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const ClipboardManagerTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.regex',
+      name: 'Regex tester',
+      description: 'Test a regular expression against sample text and see '
+          'every match and capture group live.',
+      category: ToolCategory.developer,
+      icon: Icons.code,
+      howTo: 'Type a pattern and some text. Matches and capture groups update '
+          'live. Toggle flags below the pattern.',
+      tags: const <String>[
+        'regex', 'regexp', 'pattern', 'match', 'capture', 'test', 'developer',
+      ],
+      synonyms: const <String>[
+        'test a regular expression',
+        'regex matcher',
+        'check my regex',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const RegexTesterTool(),
     ),
   ]);
   return registry;
