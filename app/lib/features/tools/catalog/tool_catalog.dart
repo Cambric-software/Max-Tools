@@ -18,6 +18,7 @@ import '../apps/archive_tool.dart';
 import '../apps/clipboard_manager_tool.dart';
 import '../apps/disk_analyser_tool.dart';
 import '../apps/duplicate_finder_tool.dart';
+import '../apps/encoding_converter_tool.dart';
 import '../apps/file_encryption_tool.dart';
 import '../apps/file_shredder_tool.dart';
 import '../apps/hash_tool.dart';
@@ -611,6 +612,27 @@ ToolRegistry buildDefaultRegistry() {
       ],
       run: _opensScreen,
       screen: (BuildContext context) => const JsonFormatterTool(),
+    ),
+    ToolDescriptor(
+      id: 'developer.encoding',
+      name: 'Encoding converter',
+      description: 'Encode and decode text in Base64, hex, URL and HTML '
+          'entities, in both directions.',
+      category: ToolCategory.developer,
+      icon: Icons.transform,
+      howTo: 'Choose a format and a direction, paste text, and read the '
+          'converted result.',
+      tags: const <String>[
+        'base64', 'hex', 'url', 'html', 'encode', 'decode', 'encoding',
+      ],
+      synonyms: const <String>[
+        'base64 encode',
+        'hex to text',
+        'url encode',
+        'html entities',
+      ],
+      run: _opensScreen,
+      screen: (BuildContext context) => const EncodingConverterTool(),
     ),
   ]);
   return registry;
