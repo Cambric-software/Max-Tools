@@ -54,7 +54,7 @@ telemetry. Your data stays on your machine.
 
 ## The tool set
 
-Max Tools currently ships **19 real tools**, each with its own screen. The older
+Max Tools currently ships **21 real tools**, each with its own screen. The older
 106-descriptor catalog was retired because most of it reshuffled text through one
 generated form.
 
