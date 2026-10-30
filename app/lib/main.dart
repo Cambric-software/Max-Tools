@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'core/ecosystem/cambric_ecosystem_service.dart';
 import 'core/ecosystem/product_registry_service.dart';
 import 'core/lifecycle/app_lifecycle_service.dart';
+import 'core/cache/tool_result_cache.dart';
 import 'core/config/cambric_config.dart';
 import 'core/security/security_service.dart';
 import 'core/services/service_registry.dart';
@@ -15,6 +16,7 @@ import 'core/updates/install_layout.dart';
 import 'features/screens/home/home_screen.dart';
 import 'package:cambric_design/cambric_design.dart';
 import 'features/tools/catalog/tool_catalog.dart';
+import 'features/tools/tool_registry.dart';
 import 'features/tools/tools_scope.dart';
 import 'features/tools/variable_store.dart';
 import 'core/cambric_app_shell.dart';
@@ -36,6 +38,14 @@ Future<void> main() async {
   final config = await CambricConfig.load(
     'lib/core/config/cambric_config.json',
   );
+
+  // Offline-first tool result cache.
+  final cacheFile = File(
+    '${(await CambricPaths.appData()).path}${Platform.pathSeparator}tool_results.json',
+  );
+  final toolCache = ToolResultCache(file: cacheFile);
+  toolCache.load();
+  final toolRegistry = buildDefaultRegistry(cache: toolCache);
 
   // Variables persist between sessions so a palette result survives a restart.
   VariableStore? variables;
@@ -98,6 +108,7 @@ Future<void> main() async {
       config: config,
       existingProducts: products,
       variables: variables,
+      registry: toolRegistry,
     ),
   );
 }
@@ -111,12 +122,14 @@ class MaxToolsApp extends StatelessWidget {
   final CambricConfig config;
   final List<Map<String, dynamic>> existingProducts;
   final VariableStore variables;
+  final ToolRegistry registry;
 
   const MaxToolsApp({
     super.key,
     required this.config,
     required this.existingProducts,
     required this.variables,
+    required this.registry,
   });
 
   @override
@@ -129,7 +142,7 @@ class MaxToolsApp extends StatelessWidget {
     // be invisible to every pushed route, and tapping Tools or the command
     // palette would crash the app.
     return ToolsScope(
-      registry: buildDefaultRegistry(),
+      registry: registry,
       variables: variables,
       child: ValueListenableBuilder<ThemeMode>(
         valueListenable: AppSettings.instance.themeMode,

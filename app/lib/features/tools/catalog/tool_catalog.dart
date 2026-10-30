@@ -50,6 +50,7 @@ import '../apps/uuid_generator_tool.dart';
 import '../apps/wealth_tool.dart';
 import '../tool_descriptor.dart';
 import '../tool_registry.dart';
+import '../../../core/cache/tool_result_cache.dart';
 
 /// A screen tool's runner. The browser and the palette open [screen] instead of
 /// calling this, so it exists only so a programmatic caller gets an honest
@@ -58,8 +59,8 @@ Future<ToolResult> _opensScreen(Map<String, dynamic> arguments) async =>
     const ToolResult.success('This tool opens its own screen.');
 
 /// Build the registry the application runs with.
-ToolRegistry buildDefaultRegistry() {
-  final registry = ToolRegistry();
+ToolRegistry buildDefaultRegistry({ToolResultCache? cache}) {
+  final registry = ToolRegistry(cache: cache);
   registry.registerAll(<ToolDescriptor>[
     ToolDescriptor(
       id: 'security.scan',

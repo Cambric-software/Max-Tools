@@ -7,6 +7,7 @@
 library;
 
 import 'tool_descriptor.dart';
+import '../../core/cache/tool_result_cache.dart';
 
 /// Raised internally when arguments do not satisfy a descriptor.
 class ToolArgumentError implements Exception {
@@ -43,6 +44,10 @@ class ToolHealth {
 
 /// Holds tools and runs them safely.
 class ToolRegistry {
+  ToolRegistry({this.cache});
+
+  final ToolResultCache? cache;
+
   final Map<String, ToolDescriptor> _tools = <String, ToolDescriptor>{};
   final Map<String, ToolHealth> _health = <String, ToolHealth>{};
 
@@ -96,6 +101,9 @@ class ToolRegistry {
 
   /// All health records, keyed by tool id.
   Map<String, ToolHealth> get allHealth => Map<String, ToolHealth>.unmodifiable(_health);
+
+  /// Last cached result for [id], if any.
+  String? lastCachedResult(String id) => cache?.get(id);
 
   /// Every registered tool, ordered by id for stable output.
   List<ToolDescriptor> all() {
@@ -195,14 +203,25 @@ class ToolRegistry {
       if (result.success) {
         health.successes++;
         health.lastError = null;
+        if (result.value != null) {
+          cache?.put(id, '${result.value}');
+        }
       } else {
         health.failures++;
         health.lastError = result.error;
+        final cached = cache?.get(id);
+        if (cached != null) {
+          return ToolResult.success(cached);
+        }
       }
       return result;
     } catch (error) {
       health.failures++;
       health.lastError = '$error';
+      final cached = cache?.get(id);
+      if (cached != null) {
+        return ToolResult.success(cached);
+      }
       return ToolResult.failure('${tool.id} failed: $error');
     }
   }

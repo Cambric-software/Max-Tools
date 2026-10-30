@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:max_tools/core/config/cambric_config.dart';
+import 'package:max_tools/features/tools/catalog/tool_catalog.dart';
 import 'package:max_tools/main.dart';
 import 'package:max_tools/features/tools/variable_store.dart';
 
@@ -19,6 +20,7 @@ void main() {
         config: config,
         existingProducts: const <Map<String, dynamic>>[],
         variables: VariableStore(),
+        registry: buildDefaultRegistry(),
       ),
     );
     await tester.pumpAndSettle();
