@@ -109,16 +109,19 @@ class _ToolsScreenState extends State<ToolsScreen> {
                     separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final tool = tools[index];
-                      return ListTile(
-                        leading: Icon(tool.icon ?? Icons.widgets_outlined),
-                        title: Text(tool.name),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(tool.description),
-                            _healthLine(tool),
-                          ],
-                        ),
+                      return Semantics(
+                        label: '${tool.name}. ${tool.description}',
+                        button: true,
+                        child: ListTile(
+                          leading: Icon(tool.icon ?? Icons.widgets_outlined),
+                          title: Text(tool.name),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(tool.description),
+                              _healthLine(tool),
+                            ],
+                          ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
@@ -134,6 +137,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
                           ],
                         ),
                         onTap: () => _open(context, tool),
+                      ),
                       );
                     },
                   ),

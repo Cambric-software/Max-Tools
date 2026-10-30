@@ -74,6 +74,19 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
+                  const SizedBox(height: 12),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: AppSettings.instance.highContrast,
+                    builder: (BuildContext context, bool hc, Widget? _) {
+                      return SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text('High contrast'),
+                        subtitle: const Text('Stronger contrast for readability.'),
+                        value: hc,
+                        onChanged: (v) => AppSettings.instance.setHighContrast(v),
+                      );
+                    },
+                  ),
                 ],
               ),
               const SizedBox(height: 16),

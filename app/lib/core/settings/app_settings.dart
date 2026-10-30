@@ -14,21 +14,27 @@ class AppSettings {
   static final AppSettings instance = AppSettings._();
 
   static const String _themeKey = 'max_tools.theme_mode';
+  static const String _highContrastKey = 'max_tools.high_contrast';
 
   /// The active theme mode. Widgets listen to this to rebuild when it changes.
   final ValueNotifier<ThemeMode> themeMode = ValueNotifier<ThemeMode>(
     ThemeMode.system,
   );
 
+  /// High-contrast mode for better readability.
+  final ValueNotifier<bool> highContrast = ValueNotifier<bool>(false);
+
   /// Reads stored preferences. Call once at startup, before `runApp`.
   Future<void> load() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       themeMode.value = _decodeTheme(prefs.getString(_themeKey));
+      highContrast.value = prefs.getBool(_highContrastKey) ?? false;
     } catch (_) {
       // Unreadable preferences fall back to the default rather than blocking
       // startup.
       themeMode.value = ThemeMode.system;
+      highContrast.value = false;
     }
   }
 
@@ -43,9 +49,21 @@ class AppSettings {
     }
   }
 
+  /// Changes the theme and stores the choice.
+  Future<void> setHighContrast(bool value) async {
+    highContrast.value = value;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_highContrastKey, value);
+    } catch (_) {
+      // The change still applies for this session.
+    }
+  }
+
   /// Returns every setting to its default.
   Future<void> restoreDefaults() async {
     await setThemeMode(ThemeMode.system);
+    await setHighContrast(false);
   }
 
   ThemeMode _decodeTheme(String? value) {

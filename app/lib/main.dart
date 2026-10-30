@@ -182,9 +182,6 @@ class MaxToolsApp extends StatelessWidget {
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,
             themeMode: mode,
-            // The product surface is the home screen. There is no wizard gate:
-            // the app is usable immediately, and everything the setup wizard
-            // collected is shown on the Cambric screen.
             home: CambricAppShell(
               productName: config.productName,
               version: config.version,
