@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/services/tool_theme_service.dart';
+import '../tools_scope.dart';
+import '../variable_store.dart';
 
 /// The frame every tool's own screen sits inside.
 ///
@@ -348,10 +350,13 @@ class ToolOutput extends StatelessWidget {
               tooltip: 'Copy to clipboard',
               icon: const Icon(Icons.copy_all_outlined, size: 18),
               onPressed: () {
-                // Imported lazily so every tool does not need the services
-                // import just to offer a copy button.
                 _copy(context, text);
               },
+            ),
+            IconButton(
+              tooltip: 'Save as variable',
+              icon: const Icon(Icons.bookmark_add_outlined, size: 18),
+              onPressed: () => _saveAsVariable(context, text),
             ),
           ],
         ),
@@ -381,5 +386,33 @@ class ToolOutput extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Copied.'), duration: Duration(seconds: 1)),
     );
+  }
+
+  void _saveAsVariable(BuildContext context, String value) {
+    try {
+      final scope = ToolsScope.scopeOf(context);
+      final variables = scope.variables ?? VariableStore();
+      var name = 'result';
+      var suffix = 1;
+      while (variables.has(name)) {
+        name = 'result${suffix++}';
+      }
+      variables.set(
+        name,
+        value: value,
+        type: VariableType.infer(value),
+        description: 'Saved from a tool result',
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Saved as \$$name. Use \$$name in the next tool.'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not save variable.')),
+      );
+    }
   }
 }
