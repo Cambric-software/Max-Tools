@@ -49,13 +49,14 @@ class ToolRegistry {
   final ToolResultCache? cache;
 
   final Map<String, ToolDescriptor> _tools = <String, ToolDescriptor>{};
+  final Map<String, ToolDescriptor Function()> _lazy = <String, ToolDescriptor Function()>{};
   final Map<String, ToolHealth> _health = <String, ToolHealth>{};
 
-  /// Number of registered tools.
-  int get length => _tools.length;
+  /// Number of registered tools, including lazy ones.
+  int get length => _tools.length + _lazy.length;
 
-  /// Whether a tool with [id] is registered.
-  bool contains(String id) => _tools.containsKey(id);
+  /// Whether a tool with [id] is registered (eager or lazy).
+  bool contains(String id) => _tools.containsKey(id) || _lazy.containsKey(id);
 
   /// Register [tool], replacing any existing tool with the same id.
   ///
@@ -89,12 +90,43 @@ class ToolRegistry {
     }
   }
 
+  /// Register a tool lazily. Its descriptor is built on first access, so a
+  /// heavy tool does not cost anything until it is actually used.
+  void registerLazy(String id, ToolDescriptor Function() factory) {
+    if (id.trim().isEmpty) {
+      throw const ToolArgumentError('A tool needs a non-empty id.');
+    }
+    _lazy[id] = factory;
+  }
+
+  /// Materialise any lazy tools whose id is in [ids]. An empty set materialises
+  /// all of them.
+  void _materialise(Set<String>? ids) {
+    final keys = ids == null ? _lazy.keys.toList() : _lazy.keys.where(ids.contains).toList();
+    for (final id in keys) {
+      final factory = _lazy.remove(id);
+      if (factory != null) {
+        try {
+          register(factory());
+        } on ToolArgumentError {
+          // A bad lazy tool is dropped rather than crashing the registry.
+        }
+      }
+    }
+  }
+
   /// Remove the tool with [id]. Returns true when something was removed.
   bool unregister(String id) => _tools.remove(id) != null;
 
   /// The tool with [id], or null.
-  ToolDescriptor? find(String id) => _tools[id];
-
+  ToolDescriptor? find(String id) {
+    if (_tools.containsKey(id)) return _tools[id];
+    if (_lazy.containsKey(id)) {
+      _materialise(<String>{id});
+      return _tools[id];
+    }
+    return null;
+  }
   /// Health record for [id], creating one if absent.
   ToolHealth healthOf(String id) =>
       _health.putIfAbsent(id, () => ToolHealth());
@@ -105,14 +137,14 @@ class ToolRegistry {
   /// Last cached result for [id], if any.
   String? lastCachedResult(String id) => cache?.get(id);
 
-  /// Every registered tool, ordered by id for stable output.
+  /// Every registered tool, ordered by id for stable output. Lazy tools
+  /// are materialised here.
   List<ToolDescriptor> all() {
+    if (_lazy.isNotEmpty) _materialise(null);
     final tools = _tools.values.toList()
       ..sort((a, b) => a.id.compareTo(b.id));
     return tools;
   }
-
-  /// Tools in [category], ordered by id.
   List<ToolDescriptor> byCategory(ToolCategory category) =>
       all().where((tool) => tool.category == category).toList();
 
