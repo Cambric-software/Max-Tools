@@ -15,6 +15,7 @@ class ToolShell extends StatelessWidget {
     required this.howTo,
     required this.children,
     this.actions,
+    this.exportText,
     this.maxWidth = 900,
   });
 
@@ -30,13 +31,38 @@ class ToolShell extends StatelessWidget {
   /// Optional app-bar actions.
   final List<Widget>? actions;
 
+  /// When set, an export menu is shown in the app bar.
+  final String? exportText;
+
   /// Content width. Charts and tables get more room than text tools.
   final double maxWidth;
 
+  void _export(BuildContext context, String value) {
+    Clipboard.setData(ClipboardData(text: value));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Exported to clipboard.'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final exportActions = exportText == null
+        ? const <Widget>[]
+        : <Widget>[
+            IconButton(
+              tooltip: 'Export',
+              icon: const Icon(Icons.ios_share_outlined),
+              onPressed: () => _export(context, exportText!),
+            ),
+          ];
     return Scaffold(
-      appBar: AppBar(title: Text(title), actions: actions),
+      appBar: AppBar(
+        title: Text(title),
+        actions: <Widget>[...?actions, ...exportActions],
+      ),
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: maxWidth),
