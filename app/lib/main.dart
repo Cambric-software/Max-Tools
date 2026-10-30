@@ -11,6 +11,7 @@ import 'core/config/cambric_config.dart';
 import 'core/security/security_service.dart';
 import 'core/services/hotkey_service.dart';
 import 'core/services/service_registry.dart';
+import 'core/services/tool_theme_service.dart';
 import 'core/subscription/subscription_service.dart';
 import 'core/settings/app_settings.dart';
 import 'core/storage/cambric_paths.dart';
@@ -52,6 +53,9 @@ Future<void> main() async {
   // Global hotkeys for favourite tools.
   final hotkeys = HotkeyService();
   await hotkeys.load();
+
+  // Per-tool appearance overrides.
+  await ToolThemeService.instance.load();
   final navigatorKey = GlobalKey<NavigatorState>();
   HardwareKeyboard.instance.addHandler((event) {
     if (event is! KeyDownEvent) return false;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../core/services/tool_theme_service.dart';
+
 /// The frame every tool's own screen sits inside.
 ///
 /// A tool is meant to feel like a small application rather than a menu entry,
@@ -16,6 +18,7 @@ class ToolShell extends StatelessWidget {
     required this.children,
     this.actions,
     this.exportText,
+    this.toolId,
     this.maxWidth = 900,
   });
 
@@ -33,6 +36,9 @@ class ToolShell extends StatelessWidget {
 
   /// When set, an export menu is shown in the app bar.
   final String? exportText;
+
+  /// Optional tool id. When set, per-tool accent and density overrides apply.
+  final String? toolId;
 
   /// Content width. Charts and tables get more room than text tools.
   final double maxWidth;
@@ -58,25 +64,113 @@ class ToolShell extends StatelessWidget {
               onPressed: () => _export(context, exportText!),
             ),
           ];
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: <Widget>[...?actions, ...exportActions],
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
-            children: <Widget>[
-              _HowTo(text: howTo),
-              const SizedBox(height: 16),
-              ...children,
-            ],
-          ),
+    final appearanceActions = toolId == null
+        ? const <Widget>[]
+        : <Widget>[
+            IconButton(
+              tooltip: 'Appearance',
+              icon: const Icon(Icons.palette_outlined),
+              onPressed: () => _showAppearance(context, toolId!),
+            ),
+          ];
+    final accent = toolId == null
+        ? null
+        : ToolThemeService.instance.accentFor(toolId!);
+    Widget body = Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+          children: <Widget>[
+            _HowTo(text: howTo),
+            const SizedBox(height: 16),
+            ...children,
+          ],
         ),
       ),
     );
+    if (accent != null) {
+      body = Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: Theme.of(context).colorScheme.copyWith(primary: accent),
+        ),
+        child: body,
+      );
+    }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        actions: <Widget>[...?actions, ...exportActions, ...appearanceActions],
+      ),
+      body: body,
+    );
+  }
+
+  Future<void> _showAppearance(BuildContext context, String toolId) async {
+    final service = ToolThemeService.instance;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Appearance'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Text('Accent'),
+            Wrap(
+              spacing: 8,
+              children: <Widget>[
+                for (var i = 0; i < ToolThemeService.accents.length; i++)
+                  GestureDetector(
+                    onTap: () async {
+                      await service.setAccent(toolId, i);
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                    },
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: ToolThemeService.accents[i],
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: service.accentFor(toolId) ==
+                                  ToolThemeService.accents[i]
+                              ? Colors.black
+                              : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            const Text('Density'),
+            Wrap(
+              spacing: 8,
+              children: <Widget>[
+                for (final d in const <String>['compact', 'comfortable', 'spacious'])
+                  ChoiceChip(
+                    label: Text(d),
+                    selected: service.densityFor(toolId) == d,
+                    onSelected: (_) async {
+                      await service.setDensity(toolId, d);
+                      if (ctx.mounted) Navigator.of(ctx).pop();
+                    },
+                  ),
+              ],
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+    // Trigger rebuild by no-op setState not available in StatelessWidget;
+    // the next build reads the updated service.
   }
 }
 
