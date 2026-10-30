@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'core/ecosystem/cambric_ecosystem_service.dart';
 import 'core/ecosystem/product_registry_service.dart';
@@ -8,6 +9,7 @@ import 'core/lifecycle/app_lifecycle_service.dart';
 import 'core/cache/tool_result_cache.dart';
 import 'core/config/cambric_config.dart';
 import 'core/security/security_service.dart';
+import 'core/services/hotkey_service.dart';
 import 'core/services/service_registry.dart';
 import 'core/subscription/subscription_service.dart';
 import 'core/settings/app_settings.dart';
@@ -46,6 +48,25 @@ Future<void> main() async {
   final toolCache = ToolResultCache(file: cacheFile);
   toolCache.load();
   final toolRegistry = buildDefaultRegistry(cache: toolCache);
+
+  // Global hotkeys for favourite tools.
+  final hotkeys = HotkeyService();
+  await hotkeys.load();
+  final navigatorKey = GlobalKey<NavigatorState>();
+  HardwareKeyboard.instance.addHandler((event) {
+    if (event is! KeyDownEvent) return false;
+    final spec = HotkeyService.specFromEvent(event);
+    final toolId = hotkeys.toolFor(spec);
+    if (toolId == null) return false;
+    final tool = toolRegistry.find(toolId);
+    final screen = tool?.screen;
+    final nav = navigatorKey.currentState;
+    if (screen != null && nav != null) {
+      nav.push(MaterialPageRoute<void>(builder: screen));
+      return true;
+    }
+    return false;
+  });
 
   // Variables persist between sessions so a palette result survives a restart.
   VariableStore? variables;
@@ -109,6 +130,7 @@ Future<void> main() async {
       existingProducts: products,
       variables: variables,
       registry: toolRegistry,
+      navigatorKey: navigatorKey,
     ),
   );
 }
@@ -123,6 +145,7 @@ class MaxToolsApp extends StatelessWidget {
   final List<Map<String, dynamic>> existingProducts;
   final VariableStore variables;
   final ToolRegistry registry;
+  final GlobalKey<NavigatorState> navigatorKey;
 
   const MaxToolsApp({
     super.key,
@@ -130,6 +153,7 @@ class MaxToolsApp extends StatelessWidget {
     required this.existingProducts,
     required this.variables,
     required this.registry,
+    required this.navigatorKey,
   });
 
   @override
@@ -148,6 +172,7 @@ class MaxToolsApp extends StatelessWidget {
         valueListenable: AppSettings.instance.themeMode,
         builder: (BuildContext context, ThemeMode mode, Widget? _) {
           return MaterialApp(
+            navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             title: config.productName,
             theme: AppTheme.light,

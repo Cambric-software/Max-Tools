@@ -21,6 +21,7 @@ void main() {
         existingProducts: const <Map<String, dynamic>>[],
         variables: VariableStore(),
         registry: buildDefaultRegistry(),
+        navigatorKey: GlobalKey<NavigatorState>(),
       ),
     );
     await tester.pumpAndSettle();
