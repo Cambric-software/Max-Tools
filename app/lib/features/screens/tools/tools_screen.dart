@@ -112,16 +112,84 @@ class _ToolsScreenState extends State<ToolsScreen> {
                       return ListTile(
                         leading: Icon(tool.icon ?? Icons.widgets_outlined),
                         title: Text(tool.name),
-                        subtitle: Text(tool.description),
-                        trailing: tool.screen != null
-                            ? const Icon(Icons.chevron_right)
-                            : (tool.readOnly
-                                ? null
-                                : const Icon(Icons.edit_outlined, size: 18)),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(tool.description),
+                            _healthLine(tool),
+                          ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            IconButton(
+                              tooltip: 'Health',
+                              icon: const Icon(Icons.monitor_heart_outlined, size: 18),
+                              onPressed: () => _showHealth(context, tool),
+                            ),
+                            if (tool.screen != null)
+                              const Icon(Icons.chevron_right)
+                            else if (!tool.readOnly)
+                              const Icon(Icons.edit_outlined, size: 18),
+                          ],
+                        ),
                         onTap: () => _open(context, tool),
                       );
                     },
                   ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _healthLine(ToolDescriptor tool) {
+    final h = _registry.healthOf(tool.id);
+    if (h.runs == 0) return const SizedBox.shrink();
+    final pct = (h.successRate * 100).round();
+    return Text(
+      '$pct% success · ${h.runs} run${h.runs == 1 ? '' : 's'}'
+          '${h.lastError == null ? '' : ' · last error: ${h.lastError}'}',
+      style: Theme.of(context).textTheme.bodySmall,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Future<void> _showHealth(BuildContext context, ToolDescriptor tool) async {
+    final h = _registry.healthOf(tool.id);
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('${tool.name} health'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Runs: ${h.runs}'),
+            Text('Successes: ${h.successes}'),
+            Text('Failures: ${h.failures}'),
+            Text('Success rate: ${(h.successRate * 100).round()}%'),
+            Text('Last used: ${h.lastUsed?.toLocal() ?? 'never'}'),
+            if (h.lastError != null) Text('Last error: ${h.lastError}'),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+          TextButton(
+            onPressed: () {
+              h.runs = 0;
+              h.successes = 0;
+              h.failures = 0;
+              h.lastUsed = null;
+              h.lastError = null;
+              Navigator.of(ctx).pop();
+              setState(() {});
+            },
+            child: const Text('Reset'),
           ),
         ],
       ),

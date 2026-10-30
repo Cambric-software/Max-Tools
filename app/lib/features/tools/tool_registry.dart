@@ -20,9 +20,31 @@ class ToolArgumentError implements Exception {
   String toString() => message;
 }
 
+/// Health record for a single tool.
+class ToolHealth {
+  ToolHealth({this.runs = 0, this.successes = 0, this.failures = 0});
+
+  int runs;
+  int successes;
+  int failures;
+  DateTime? lastUsed;
+  String? lastError;
+
+  double get successRate => runs == 0 ? 1.0 : successes / runs;
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'runs': runs,
+        'successes': successes,
+        'failures': failures,
+        'lastUsed': lastUsed?.toIso8601String(),
+        'lastError': lastError,
+      };
+}
+
 /// Holds tools and runs them safely.
 class ToolRegistry {
   final Map<String, ToolDescriptor> _tools = <String, ToolDescriptor>{};
+  final Map<String, ToolHealth> _health = <String, ToolHealth>{};
 
   /// Number of registered tools.
   int get length => _tools.length;
@@ -67,6 +89,13 @@ class ToolRegistry {
 
   /// The tool with [id], or null.
   ToolDescriptor? find(String id) => _tools[id];
+
+  /// Health record for [id], creating one if absent.
+  ToolHealth healthOf(String id) =>
+      _health.putIfAbsent(id, () => ToolHealth());
+
+  /// All health records, keyed by tool id.
+  Map<String, ToolHealth> get allHealth => Map<String, ToolHealth>.unmodifiable(_health);
 
   /// Every registered tool, ordered by id for stable output.
   List<ToolDescriptor> all() {
@@ -158,10 +187,22 @@ class ToolRegistry {
     } on ToolArgumentError catch (error) {
       return ToolResult.failure(error.message);
     }
+    final health = healthOf(id);
+    health.runs++;
+    health.lastUsed = DateTime.now();
     try {
       final result = await tool.run(resolved);
+      if (result.success) {
+        health.successes++;
+        health.lastError = null;
+      } else {
+        health.failures++;
+        health.lastError = result.error;
+      }
       return result;
     } catch (error) {
+      health.failures++;
+      health.lastError = '$error';
       return ToolResult.failure('${tool.id} failed: $error');
     }
   }
