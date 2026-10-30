@@ -90,6 +90,44 @@ class ProductRegistryService {
     }).toList();
   }
 
+  /// Returns products whose lastSeen is older than [threshold].
+  /// Useful for spotting stale or uninstalled Cambric products.
+  Future<List<Map<String, dynamic>>> staleProducts(Duration threshold) async {
+    final all = await products();
+    final cutoff = DateTime.now().subtract(threshold);
+    return all.where((p) {
+      final lastSeen = p['lastSeen']?.toString();
+      if (lastSeen == null) return true;
+      final dt = DateTime.tryParse(lastSeen);
+      if (dt == null) return true;
+      return dt.isBefore(cutoff);
+    }).toList();
+  }
+
+  /// Compares two version strings (e.g. "1.2.3"). Returns negative if [a]
+  /// is older, zero if equal, positive if newer.
+  static int compareVersions(String a, String b) {
+    final pa = a.split('.').map((s) => int.tryParse(s) ?? 0).toList();
+    final pb = b.split('.').map((s) => int.tryParse(s) ?? 0).toList();
+    final len = pa.length > pb.length ? pa.length : pb.length;
+    for (var i = 0; i < len; i++) {
+      final va = i < pa.length ? pa[i] : 0;
+      final vb = i < pb.length ? pb[i] : 0;
+      if (va != vb) return va.compareTo(vb);
+    }
+    return 0;
+  }
+
+  /// Returns products whose registered version is older than [currentVersion].
+  Future<List<Map<String, dynamic>>> outdatedProducts(String currentVersion) async {
+    final all = await products();
+    return all.where((p) {
+      final v = p['version']?.toString();
+      if (v == null) return false;
+      return compareVersions(v, currentVersion) < 0;
+    }).toList();
+  }
+
   /// Removes this product from the shared registry.
   Future<void> unregister(String productId) async {
     final file = await _fileForProduct(productId);
