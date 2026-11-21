@@ -195,7 +195,8 @@ class _ClipboardManagerToolState extends State<ClipboardManagerTool> {
             ],
           ),
           const SizedBox(height: 8),
-          Expanded(
+          SizedBox(
+            height: 360,
             child: shown.isEmpty
                 ? const Center(child: Text('No entries yet. Press Capture.'))
                 : ListView.builder(

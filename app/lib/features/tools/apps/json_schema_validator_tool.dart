@@ -164,7 +164,8 @@ class _JsonSchemaValidatorToolState extends State<JsonSchemaValidatorTool> {
       howTo: 'Paste a JSON Schema on the left and a JSON document on the right. '
           'Every violation is reported with its path.',
       children: [
-        Expanded(
+        SizedBox(
+          height: 260,
           child: Row(
             children: [
               Expanded(
@@ -190,11 +191,9 @@ class _JsonSchemaValidatorToolState extends State<JsonSchemaValidatorTool> {
           ),
         ),
         const SizedBox(height: 8),
-        Expanded(
-          child: SingleChildScrollView(
-            child: SelectableText(_result,
-                style: const TextStyle(fontFamily: 'monospace')),
-          ),
+        SingleChildScrollView(
+          child: SelectableText(_result,
+              style: const TextStyle(fontFamily: 'monospace')),
         ),
       ],
     );

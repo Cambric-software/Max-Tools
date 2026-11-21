@@ -88,7 +88,8 @@ class _JsMinifierToolState extends State<JsMinifierTool> {
           },
         ),
         const SizedBox(height: 8),
-        Expanded(
+        SizedBox(
+          height: 220,
           child: TextField(
             controller: _output,
             decoration: const InputDecoration(labelText: 'Output'),

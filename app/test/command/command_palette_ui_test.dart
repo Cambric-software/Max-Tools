@@ -76,7 +76,9 @@ void main() {
     testWidgets('shows the best match with its confidence', (tester) async {
       await pumpPalette(tester);
       await type(tester, 'hash my password');
-      expect(find.text('Hash Text'), findsOneWidget);
+      // The fuzzy-suggestion chip and the best-match tile can both show the
+      // same tool name, so require at least one and check the unique id.
+      expect(find.text('Hash Text'), findsWidgets);
       expect(find.textContaining('security.hash'), findsOneWidget);
       expect(find.textContaining('matched on'), findsOneWidget);
     });

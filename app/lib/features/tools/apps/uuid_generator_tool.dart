@@ -127,7 +127,10 @@ class _UuidGeneratorToolState extends State<UuidGeneratorTool> {
       howTo: 'Generate one or many UUIDs, or paste a UUID to inspect its '
           'version and variant.',
       children: [
-        Row(
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             DropdownButton<String>(
               value: _version,
@@ -141,7 +144,6 @@ class _UuidGeneratorToolState extends State<UuidGeneratorTool> {
                 setState(() => _version = v);
               },
             ),
-            const SizedBox(width: 8),
             SizedBox(
               width: 80,
               child: TextField(
@@ -150,12 +152,12 @@ class _UuidGeneratorToolState extends State<UuidGeneratorTool> {
                 keyboardType: TextInputType.number,
               ),
             ),
-            const SizedBox(width: 8),
             FilledButton(onPressed: _generate, child: const Text('Generate')),
           ],
         ),
         const SizedBox(height: 8),
-        Expanded(
+        SizedBox(
+          height: 320,
           child: _generated.isEmpty
               ? const Center(child: Text('No UUIDs yet.'))
               : ListView.builder(

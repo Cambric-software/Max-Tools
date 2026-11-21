@@ -147,7 +147,8 @@ class _EncodingConverterToolState extends State<EncodingConverterTool> {
         if (_error != null)
           Text(_error!,
               style: TextStyle(color: Theme.of(context).colorScheme.error)),
-        Expanded(
+        SizedBox(
+          height: 220,
           child: TextField(
             controller: _output,
             decoration: const InputDecoration(labelText: 'Output'),

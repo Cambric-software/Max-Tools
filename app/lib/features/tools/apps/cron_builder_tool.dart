@@ -133,13 +133,8 @@ class _CronBuilderToolState extends State<CronBuilderTool> {
               style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 8),
           Text('Next runs:', style: Theme.of(context).textTheme.titleSmall),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _next.length,
-              itemBuilder: (context, i) =>
-                  Text(_next[i].toLocal().toString()),
-            ),
-          ),
+          for (final DateTime run in _next)
+            Text(run.toLocal().toString()),
         ],
       ],
     );

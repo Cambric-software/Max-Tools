@@ -77,7 +77,8 @@ class _GitDiffViewerToolState extends State<GitDiffViewerTool> {
         Text('Files: ${_files.length}  +$_added  -$_removed',
             style: Theme.of(context).textTheme.titleSmall),
         const SizedBox(height: 8),
-        Expanded(
+        SizedBox(
+          height: 320,
           child: _files.isEmpty
               ? const Center(child: Text('Paste a diff.'))
               : ListView.builder(

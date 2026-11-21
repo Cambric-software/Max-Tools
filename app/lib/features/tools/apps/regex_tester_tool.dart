@@ -102,7 +102,8 @@ class _RegexTesterToolState extends State<RegexTesterTool> {
         Text('Matches: ${_matches.length}',
             style: Theme.of(context).textTheme.titleSmall),
         const SizedBox(height: 8),
-        Expanded(
+        SizedBox(
+          height: 300,
           child: _matches.isEmpty
               ? const Center(child: Text('No matches.'))
               : ListView.builder(

@@ -97,7 +97,8 @@ class _FileDiffToolState extends State<FileDiffTool> {
       howTo: 'Paste the old version on the left and the new one on the right. '
           'Lines are matched exactly; added and removed lines are coloured.',
       children: [
-        Expanded(
+        SizedBox(
+          height: 260,
           child: Row(
             children: [
               Expanded(
@@ -123,7 +124,8 @@ class _FileDiffToolState extends State<FileDiffTool> {
           ),
         ),
         const SizedBox(height: 8),
-        Expanded(
+        SizedBox(
+          height: 320,
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: Theme.of(context).dividerColor),

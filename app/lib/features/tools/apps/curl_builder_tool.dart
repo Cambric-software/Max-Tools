@@ -110,11 +110,9 @@ class _CurlBuilderToolState extends State<CurlBuilderTool> {
           onChanged: (_) => _parseCurl(),
         ),
         const SizedBox(height: 8),
-        Expanded(
-          child: SingleChildScrollView(
-            child: SelectableText(_output,
-                style: const TextStyle(fontFamily: 'monospace')),
-          ),
+        SingleChildScrollView(
+          child: SelectableText(_output,
+              style: const TextStyle(fontFamily: 'monospace')),
         ),
       ],
     );

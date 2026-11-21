@@ -83,7 +83,8 @@ class _EnvEditorToolState extends State<EnvEditorTool> {
           onChanged: (_) => _parse(),
         ),
         const SizedBox(height: 8),
-        Expanded(
+        SizedBox(
+          height: 260,
           child: ListView.builder(
             itemCount: _rows.length,
             itemBuilder: (context, i) {
@@ -118,11 +119,9 @@ class _EnvEditorToolState extends State<EnvEditorTool> {
           ),
         ),
         const SizedBox(height: 8),
-        Expanded(
-          child: SingleChildScrollView(
-            child: SelectableText(_output,
-                style: const TextStyle(fontFamily: 'monospace')),
-          ),
+        SingleChildScrollView(
+          child: SelectableText(_output,
+              style: const TextStyle(fontFamily: 'monospace')),
         ),
       ],
     );

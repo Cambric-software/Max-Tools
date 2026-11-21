@@ -31,7 +31,8 @@ class _MarkdownEditorToolState extends State<MarkdownEditorTool> {
       howTo: 'Write Markdown on the left. The preview on the right updates as '
           'you type. Copy the source or export it when you are done.',
       children: [
-        Expanded(
+        SizedBox(
+          height: 420,
           child: Row(
             children: [
               Expanded(
