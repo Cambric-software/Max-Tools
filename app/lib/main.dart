@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/ecosystem/cambric_ecosystem_service.dart';
 import 'core/ecosystem/product_registry_service.dart';
@@ -14,10 +15,10 @@ import 'core/services/service_registry.dart';
 import 'core/services/tool_theme_service.dart';
 import 'core/subscription/subscription_service.dart';
 import 'core/settings/app_settings.dart';
+import 'core/settings/app_theme_builder.dart';
 import 'core/storage/cambric_paths.dart';
 import 'core/updates/install_layout.dart';
 import 'features/screens/home/home_screen.dart';
-import 'package:cambric_design/cambric_design.dart';
 import 'features/tools/catalog/tool_catalog.dart';
 import 'features/tools/tool_registry.dart';
 import 'features/tools/tools_scope.dart';
@@ -169,19 +170,71 @@ class MaxToolsApp extends StatelessWidget {
     // onto the Navigator is a sibling of `home`, so a scope placed there would
     // be invisible to every pushed route, and tapping Tools or the command
     // palette would crash the app.
+    final AppSettings settings = AppSettings.instance;
+    final Listenable choices = Listenable.merge(<Listenable>[
+      settings.themeMode,
+      settings.accent,
+      settings.highContrast,
+      settings.languageCode,
+      settings.textScale,
+    ]);
+
     return ToolsScope(
       registry: registry,
       variables: variables,
-      child: ValueListenableBuilder<ThemeMode>(
-        valueListenable: AppSettings.instance.themeMode,
-        builder: (BuildContext context, ThemeMode mode, Widget? _) {
+      child: AnimatedBuilder(
+        animation: choices,
+        builder: (BuildContext context, Widget? _) {
+          final ThemeMode mode = settings.themeMode.value;
+          final AppAccent accent = settings.accent.value;
+          final bool highContrast = settings.highContrast.value;
+          final String languageCode = settings.languageCode.value;
+          final double textScale = settings.textScale.value;
+
           return MaterialApp(
             navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             title: config.productName,
-            theme: AppTheme.light,
-            darkTheme: AppTheme.dark,
+            theme: buildAppTheme(
+              brightness: Brightness.light,
+              accent: accent,
+              highContrast: highContrast,
+            ),
+            darkTheme: buildAppTheme(
+              brightness: Brightness.dark,
+              accent: accent,
+              highContrast: highContrast,
+            ),
             themeMode: mode,
+            locale: Locale(languageCode),
+            supportedLocales: const <Locale>[
+              Locale('en'),
+              Locale('ar'),
+            ],
+            localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            // The person's text size multiplies the system scale rather than
+            // replacing it, so an OS-wide preference is not silently undone.
+            // Arabic needs a right-to-left tree; English stays left-to-right.
+            builder: (BuildContext context, Widget? child) {
+              final MediaQueryData media = MediaQuery.of(context);
+              return MediaQuery(
+                data: media.copyWith(
+                  textScaler: TextScaler.linear(
+                    effectiveTextScale(media.textScaler.scale(1.0), textScale),
+                  ),
+                ),
+                child: Directionality(
+                  textDirection: languageCode == 'ar'
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  child: child ?? const SizedBox.shrink(),
+                ),
+              );
+            },
             home: CambricAppShell(
               productName: config.productName,
               version: config.version,

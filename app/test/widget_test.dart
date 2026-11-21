@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:max_tools/core/config/cambric_config.dart';
+import 'package:max_tools/core/settings/app_settings.dart';
 import 'package:max_tools/features/tools/catalog/tool_catalog.dart';
 import 'package:max_tools/main.dart';
 import 'package:max_tools/features/tools/variable_store.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   const config = CambricConfig(
@@ -101,7 +103,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Appearance'), findsOneWidget);
-    await tester.drag(find.byType(ListView), const Offset(0, -700));
+    await tester.scrollUntilVisible(
+      find.text('About'),
+      400,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.pumpAndSettle();
     expect(find.text('About'), findsOneWidget);
     expect(find.text('Cambric application template'), findsNothing);
@@ -120,5 +126,53 @@ void main() {
 
     final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(app.themeMode, ThemeMode.dark);
+  });
+
+  testWidgets('Arabic switches the interface and reads right to left',
+      (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    await AppSettings.instance.load();
+    addTearDown(() async {
+      await AppSettings.instance.setLanguage('en');
+      await AppSettings.instance.setTextScale(1.0);
+      await AppSettings.instance.setThemeMode(ThemeMode.system);
+    });
+
+    await pumpApp(tester);
+    await tester.tap(find.byIcon(Icons.settings_outlined).first);
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('العربية'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('العربية'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('الإعدادات'), findsWidgets);
+    final BuildContext context = tester.element(find.text('الإعدادات').first);
+    expect(Directionality.of(context), TextDirection.rtl);
+  });
+
+  testWidgets('the text size setting scales the interface',
+      (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    await AppSettings.instance.load();
+    addTearDown(() async {
+      await AppSettings.instance.setTextScale(1.0);
+      await AppSettings.instance.setLanguage('en');
+      await AppSettings.instance.setThemeMode(ThemeMode.system);
+    });
+
+    await pumpApp(tester);
+    await tester.tap(find.byIcon(Icons.settings_outlined).first);
+    await tester.pumpAndSettle();
+
+    await AppSettings.instance.setTextScale(1.5);
+    await tester.pumpAndSettle();
+
+    final BuildContext context = tester.element(find.text('Appearance'));
+    expect(MediaQuery.textScalerOf(context).scale(10), closeTo(15, 0.01));
   });
 }

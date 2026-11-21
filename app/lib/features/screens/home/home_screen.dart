@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/config/cambric_config.dart';
+import '../../../core/localization/app_strings.dart';
 import '../../widgets/responsive_layout.dart';
 import '../cache/cache_screen.dart';
 import '../cambric/cambric_screen.dart';
@@ -33,18 +34,19 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isWide = ResponsiveLayout.isDesktop(context);
+    final AppStrings s = AppStrings.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(config.productName),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.bolt_outlined),
-            tooltip: 'Command palette (Ctrl+K)',
+            tooltip: s.text('home.command_palette_tooltip'),
             onPressed: () => showCommandPalette(context),
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            tooltip: 'Settings',
+            tooltip: s.text('home.settings_tooltip'),
             onPressed: () => _open(context, SettingsScreen(config: config)),
           ),
         ],
@@ -86,31 +88,31 @@ class HomeScreen extends StatelessWidget {
   // ── cards ────────────────────────────────────────────────────────────────
 
   List<Widget> _cards(BuildContext context) {
+    final AppStrings s = AppStrings.of(context);
     return <Widget>[
       _heroCard(context),
       const SizedBox(height: 16),
       _navCard(
         context,
         icon: Icons.handyman_outlined,
-        title: 'Tools',
-        subtitle: 'Every tool in one searchable place',
+        title: s.text('home.tools_title'),
+        subtitle: s.text('home.tools_subtitle'),
         onTap: () => _open(context, const ToolsScreen()),
       ),
       const SizedBox(height: 8),
       _navCard(
         context,
         icon: Icons.bolt_outlined,
-        title: 'Command Palette',
-        subtitle: 'Ask in plain English — Ctrl+K anywhere',
+        title: s.text('home.palette_title'),
+        subtitle: s.text('home.palette_subtitle'),
         onTap: () => showCommandPalette(context),
       ),
       const SizedBox(height: 8),
       _navCard(
         context,
         icon: Icons.layers_outlined,
-        title: 'Cambric',
-        subtitle: 'This installation, your other Cambric products, and the '
-            'licence',
+        title: s.text('home.cambric_title'),
+        subtitle: s.text('home.cambric_subtitle'),
         onTap: () => _open(
           context,
           CambricScreen(config: config, initialProducts: existingProducts),
@@ -120,32 +122,32 @@ class HomeScreen extends StatelessWidget {
       _navCard(
         context,
         icon: Icons.system_update_alt_outlined,
-        title: 'Updates',
-        subtitle: 'Check, download and verify a new version',
+        title: s.text('home.updates_title'),
+        subtitle: s.text('home.updates_subtitle'),
         onTap: () => _open(context, UpdatesScreen(config: config)),
       ),
       const SizedBox(height: 8),
       _navCard(
         context,
         icon: Icons.storage_outlined,
-        title: 'Cache',
-        subtitle: 'View and clear cached data',
+        title: s.text('home.cache_title'),
+        subtitle: s.text('home.cache_subtitle'),
         onTap: () => _open(context, const CacheScreen()),
       ),
       const SizedBox(height: 8),
       _navCard(
         context,
         icon: Icons.monitor_heart_outlined,
-        title: 'Diagnostics',
-        subtitle: 'System information and platform details',
+        title: s.text('home.diagnostics_title'),
+        subtitle: s.text('home.diagnostics_subtitle'),
         onTap: () => _open(context, const DiagnosticsScreen()),
       ),
       const SizedBox(height: 8),
       _navCard(
         context,
         icon: Icons.settings_outlined,
-        title: 'Settings',
-        subtitle: 'Appearance, behaviour and storage',
+        title: s.text('home.settings_title'),
+        subtitle: s.text('home.settings_subtitle'),
         onTap: () => _open(context, SettingsScreen(config: config)),
       ),
       const SizedBox(height: 28),
@@ -155,6 +157,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _heroCard(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final AppStrings s = AppStrings.of(context);
     return Card(
       color: colorScheme.primaryContainer,
       child: Padding(
@@ -177,7 +180,10 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'All your tools in one place. Version ${config.version}.',
+              s.withValues(
+                'home.hero_subtitle',
+                <String, String>{'version': config.version},
+              ),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: colorScheme.onPrimaryContainer,
                   ),
@@ -211,10 +217,11 @@ class HomeScreen extends StatelessWidget {
 
   List<Widget> _quickActions(BuildContext context) {
     final theme = Theme.of(context);
+    final AppStrings s = AppStrings.of(context);
 
     return <Widget>[
       Text(
-        'Quick actions',
+        s.text('home.quick_actions'),
         style: theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
         ),
@@ -223,29 +230,29 @@ class HomeScreen extends StatelessWidget {
       _actionTile(
         context,
         icon: Icons.search,
-        title: 'Find a tool',
-        subtitle: 'Search everything by name or by what it does',
+        title: s.text('home.find_tool_title'),
+        subtitle: s.text('home.find_tool_subtitle'),
         onTap: () => _open(context, const ToolsScreen()),
       ),
       _actionTile(
         context,
         icon: Icons.bolt_outlined,
-        title: 'Run a command',
-        subtitle: 'Type what you want instead of hunting through menus',
+        title: s.text('home.run_command_title'),
+        subtitle: s.text('home.run_command_subtitle'),
         onTap: () => showCommandPalette(context),
       ),
       _actionTile(
         context,
         icon: Icons.system_update_alt_outlined,
-        title: 'Check for updates',
-        subtitle: 'Download and verify the newest release',
+        title: s.text('home.check_updates_title'),
+        subtitle: s.text('home.check_updates_subtitle'),
         onTap: () => _open(context, UpdatesScreen(config: config)),
       ),
       _actionTile(
         context,
         icon: Icons.layers_outlined,
-        title: 'Cambric',
-        subtitle: 'Product details and the other Cambric apps installed',
+        title: s.text('home.cambric_title'),
+        subtitle: s.text('home.cambric_quick_subtitle'),
         onTap: () => _open(
           context,
           CambricScreen(config: config, initialProducts: existingProducts),
@@ -260,16 +267,14 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Privacy',
+                s.text('home.privacy_title'),
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 6),
               Text(
-                'Max Tools works on your machine. Nothing you open or convert '
-                'is uploaded. The only network requests are release checks and '
-                'updates you start yourself.',
+                s.text('home.privacy_body'),
                 style: theme.textTheme.bodySmall?.copyWith(height: 1.5),
               ),
             ],
@@ -304,12 +309,13 @@ class HomeScreen extends StatelessWidget {
 
   Widget _footer(BuildContext context) {
     final theme = Theme.of(context);
+    final AppStrings s = AppStrings.of(context);
     return Column(
       children: <Widget>[
         Divider(color: theme.colorScheme.outlineVariant),
         const SizedBox(height: 8),
         Text(
-          'Copyright © 2026 Cambric Software. All rights reserved.',
+          s.text('home.copyright'),
           textAlign: TextAlign.center,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
@@ -317,7 +323,10 @@ class HomeScreen extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Version ${config.version}',
+          s.withValues(
+            'home.version',
+            <String, String>{'version': config.version},
+          ),
           textAlign: TextAlign.center,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
