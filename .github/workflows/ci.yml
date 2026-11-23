@@ -24,8 +24,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
-
+          flutter-version: '3.47.2'
       - name: Install dependencies
         working-directory: app
         run: flutter pub get
@@ -43,8 +42,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
-
+          flutter-version: '3.47.2'
       - name: Install dependencies
         working-directory: app
         run: flutter pub get
@@ -68,8 +66,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
-
+          flutter-version: '3.47.2'
       - name: Install dependencies
         working-directory: app
         run: flutter pub get
@@ -102,8 +99,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
-
+          flutter-version: '3.47.2'
       - name: Install dependencies
         working-directory: app
         run: flutter pub get
@@ -129,8 +125,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
-
+          flutter-version: '3.47.2'
       - name: Install dependencies
         working-directory: app
         run: flutter pub get

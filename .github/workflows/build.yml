@@ -20,7 +20,7 @@ jobs:
           java-version: "17"
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.47.2'
       - name: Install dependencies
         working-directory: app
         run: flutter pub get
@@ -46,7 +46,7 @@ jobs:
             libgtk-3-dev liblzma-dev libstdc++-12-dev
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.47.2'
       - name: Install dependencies
         working-directory: app
         run: flutter pub get
@@ -108,7 +108,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.47.2'
       - name: Install dependencies
         working-directory: app
         run: flutter pub get
@@ -128,7 +128,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.47.2'
       - name: Install dependencies
         working-directory: app
         run: flutter pub get
